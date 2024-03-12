@@ -4,4 +4,3 @@ import LoginPage from "./src/LoginPage"; //importing login page component from r
 
 ReactDOM.render(<LoginPage />, document.getElementById("root"));
 
-//hello
