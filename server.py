@@ -8,7 +8,7 @@ app = Flask(__name__)
 def serve_login_page():
     return send_from_directory('src', 'LoginPage.html')
 
-@app.route("/index.js")
+@app.route("/functions.js")
 def serve_javascript():
     return send_from_directory("public", "index.js")
 
