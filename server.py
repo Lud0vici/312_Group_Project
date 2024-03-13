@@ -1,24 +1,35 @@
 import socketserver
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, Response
 
 app = Flask(__name__)
 
 
+def add_no_sniff(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+
 @app.route("/")
 def serve_login_page():
-    return send_from_directory('src', 'LoginPage.html')
+    response = send_from_directory('src', 'LoginPage.html')
+    add_no_sniff(response)
+    return response
 
 @app.route("/functions.js")
 def serve_javascript():
-    return send_from_directory("public", "functions.js")
+    response = send_from_directory("public", "functions.js")
+    add_no_sniff(response)
+    return response
 
 @app.route("/style.css")
 def serve_css():
-    return send_from_directory("public", "style.css")
+    response = send_from_directory("public", "style.css")
+    add_no_sniff(response)
+    return response
 
 @app.route("/rocket_ball.png")
 def serve_rocket_ball():
-    return send_from_directory("public", "image/rocket_ball.png")
+    response = send_from_directory("public", "image/rocket_ball.png")
+    add_no_sniff(response)
+    return response
 
 
 if __name__ == "__main__":
