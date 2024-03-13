@@ -8,6 +8,10 @@ app = Flask(__name__)
 def serve_login_page():
     return send_from_directory('src', 'LoginPage.html')
 
+@app.route("/index.js")
+def serve_javascript():
+    return send_from_directory("public", "index.js")
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
