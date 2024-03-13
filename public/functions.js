@@ -1,3 +1,3 @@
 function welcome(){
-    document.getElementById("intro").innerHTML += "<br/>This text was added by JavaScript 😀";
+    document.getElementById("intro").innerHTML += "<br>Prepare for trouble! And make it double! 😆";
 }

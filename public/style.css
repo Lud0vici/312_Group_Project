@@ -2,3 +2,8 @@ body {
     background-color: #000000;
     color: white;
 }
+
+.rocket_ball {
+    height: 10%;
+    width: 10%;
+}

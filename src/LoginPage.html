@@ -5,22 +5,36 @@
     <meta charset="UTF-8">
     <!-- This is for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/public/style.css"/>
-    <script src="/public/functions.js"></script>
+    <link rel="stylesheet" type="text/css" href="/style.css"/>
+    <script src="/functions.js"></script>
 </head>
+
+<body onload="welcome();">
+
 <body>
-    <h1>Team Rocket’s Restaurant Review</h1>
-    <p1 id="intro">Welcome to Team Rocket's app. Login here!</p1>
-    <form action="/login" method="post">
+
+    <div style="text-align: center;">
+
         <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
+            <img src="/rocket_ball.png" class="rocket_ball"/>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit">Login</button>
-    </form>
+
+        <h1>Team Rocket’s Restaurant Review</h1>
+        <p1 id="intro">Welcome to Team Rocket's app. Login here!</p1>
+        <form action="/login" method="post">
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+
+    </div>
+
 </body>
+
 </html>
