@@ -35,9 +35,26 @@ def serve_rocket_ball():
 #edit function so that it calls on insertUser to put into database 
 @app.route("/register", methods=['POST'])
 def serve_registration():
-    response = send_from_directory("public", "/register")
-    add_no_sniff(response)
-    return response
+    first_name = request.form.get('first-name')
+    last_name = request.form.get('last-name') 
+    email = request.form.get('email')
+    username = request.form.get('username') 
+    password = request.form.get('password')
+    confirmedPassword = request.form.get('confirm-passwor')
+    if password != confirmedPassword: 
+        #the flash functio is from Flask which just displays a temp message 
+        flash("Passwords do not match") 
+        return redirect(url_for("registration_form"))
+    salt, hashed_password = database_handler.salt_and_hash_password(password) 
+    try: 
+        database_handler.insert_user(username, salt, hashed_password)
+    except Exception as e: 
+        flash(str(e))
+
+
+    # response = send_from_directory("public", "/register")
+    # add_no_sniff(response)
+    # return response
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)

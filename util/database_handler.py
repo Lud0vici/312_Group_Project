@@ -25,5 +25,5 @@ def salt_and_hash_password(password):
     salt = secrets.token_hex(16)
     salted_password = password + salt
     hashed_password = hashlib.sha256(salted_password.encode()).hexdigest()
-    return hashed_password
+    return (salt, hashed_password) 
 
