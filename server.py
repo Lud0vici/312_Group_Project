@@ -1,5 +1,5 @@
 import socketserver
-from flask import Flask, send_from_directory, request
+from flask import Flask, send_from_directory, request, redirect, url_for
 from util import database_handler
 
 
@@ -40,16 +40,17 @@ def serve_registration():
     email = request.form.get('email')
     username = request.form.get('username') 
     password = request.form.get('password')
-    confirmedPassword = request.form.get('confirm-passwor')
+    confirmedPassword = request.form.get('confirm-password')
     if password != confirmedPassword: 
         #the flash functio is from Flask which just displays a temp message 
         flash("Passwords do not match") 
-        return redirect(url_for("registration_form"))
+        return redirect(url_for("registration_form")) #need to adjust regist.... 
     salt, hashed_password = database_handler.salt_and_hash_password(password) 
     try: 
         database_handler.insert_user(username, salt, hashed_password)
-    except Exception as e: 
+    except Exception as e: #try if else statments instead of try and except 
         flash(str(e))
+        return redirect(url_for("serve_login_page")) #need to adjust serve... 
 
 
     # response = send_from_directory("public", "/register")

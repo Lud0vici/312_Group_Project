@@ -10,10 +10,13 @@ chat_collection = db["chat"]   #collection for chat
 #checks if user already exists and adds username + salt + hash into database 
 
 
-def insert_user(username: str, salt: str, hashedPassword: str): 
+def insert_user(first_name: str, last_name: str, email: str, username: str, salt: str, hashedPassword: str): 
     if user_collection.find_one({"username": username}): 
         raise Exception("Username already exists.") 
     user_collection.insert_one({
+        "first-name": first_name,
+        "last-name": last_name, 
+        "email": email, 
         "username": username,
         "salt": salt,
         "password": hashedPassword
