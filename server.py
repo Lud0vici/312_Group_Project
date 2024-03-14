@@ -3,7 +3,6 @@ from flask import Flask, send_from_directory
 
 app = Flask(__name__)
 
-
 def add_no_sniff(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
 
@@ -31,8 +30,11 @@ def serve_rocket_ball():
     add_no_sniff(response)
     return response
 
+@app.route("/register", methods=['POST'])
+def serve_registration():
+    response = send_from_directory("public", "/register")
+    add_no_sniff(response)
+    return response
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
-    # app.run()
-    # comment for demo
