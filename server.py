@@ -1,5 +1,7 @@
 import socketserver
 from flask import Flask, send_from_directory, request
+from util import database_handler
+
 
 app = Flask(__name__)
 
