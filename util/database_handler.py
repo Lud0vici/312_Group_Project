@@ -1,4 +1,6 @@
-from pymongo import MongoClient 
+from pymongo import MongoClient
+import hashlib
+import secrets
 
 mongo_client =  MongoClient("TeamRocketMongo")
 db = mongo_client["TeamRocketDB"] 
@@ -7,14 +9,21 @@ chat_collection = db["chat"]   #collection for chat
 
 #checks if user already exists and adds username + salt + hash into database 
 
+
 def insert_user(username: str, salt: str, hashedPassword: str): 
     if user_collection.find_one({"username": username}): 
         raise Exception("Username already exists.") 
     user_collection.insert_one({
-        "username": username ,  
-        "salt" : salt ,
-        "password" : hashedPassword 
+        "username": username,
+        "salt": salt,
+        "password": hashedPassword
         }) 
 
 
+
+def salt_and_hash_password(password):
+    salt = secrets.token_hex(16)
+    salted_password = password + salt
+    hashed_password = hashlib.sha256(salted_password.encode()).hexdigest()
+    return hashed_password
 
