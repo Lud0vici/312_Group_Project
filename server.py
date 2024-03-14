@@ -1,5 +1,6 @@
 import socketserver
 from flask import Flask, send_from_directory
+import insert_user, 
 
 app = Flask(__name__)
 
@@ -30,6 +31,7 @@ def serve_rocket_ball():
     add_no_sniff(response)
     return response
 
+#edit function so that it calls on insertUser to put into database 
 @app.route("/register", methods=['POST'])
 def serve_registration():
     response = send_from_directory("public", "/register")
