@@ -1,5 +1,5 @@
 import socketserver
-from flask import Flask, send_from_directory
+from flask import Flask, send_from_directory, request
 
 app = Flask(__name__)
 
