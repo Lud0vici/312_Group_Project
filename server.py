@@ -1,6 +1,6 @@
 import secrets
 import socketserver
-from flask import Flask, send_from_directory, request, redirect, url_for, flash, make_response, jsonify, render_template
+from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template
 from util import database_handler
 from util import auth
 from util.database_handler import user_collection
@@ -115,7 +115,7 @@ def serve_login():
 
 
     if user_data is None:   #if user not found in db, flash "User not found"
-        flash("User not found")
+        #flash("User not found")
         response = make_response("User not found")
         add_no_sniff(response)
         response.status_code = 404
@@ -135,7 +135,7 @@ def serve_login():
             response.set_cookie("authentication-token", token, httponly=True, expires=expire_date, max_age=3600)     #set auth-token cookie
             return response
         else:
-            flash("Incorrect password")
+            #flash("Incorrect password")
             response = make_response("Incorrect password")
             add_no_sniff(response)
             response.status_code = 404
