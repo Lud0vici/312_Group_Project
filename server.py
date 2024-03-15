@@ -39,12 +39,15 @@ def serve_rocket_ball():
 #edit function so that it calls on insertUser to put into database 
 @app.route("/register", methods=['POST'])
 def serve_registration():
-    first_name = request.form.get('first-name')
-    last_name = request.form.get('last-name') 
-    email = request.form.get('email')
-    username = request.form.get('username') 
-    password = request.form.get('password')
-    confirmedPassword = request.form.get('confirm-password')
+    user_credentials = auth.extract_credentials(request)
+
+     # assumed that user_credentials returns ["first", "last", "email", "username", "pass", "confirmed-pass"]
+    first_name = user_credentials[0] 
+    last_name = user_credentials[1]
+    email = user_credentials[2]
+    username = user_credentials[3]
+    password = user_credentials[4]
+    confirmedPassword = user_credentials[5]
     validPassword = auth.validate_password(password) 
     validConfirmed = auth.validate_password(confirmedPassword)
     if validPassword != True: 
