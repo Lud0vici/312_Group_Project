@@ -45,16 +45,21 @@ def serve_registration():
     username = request.form.get('username') 
     password = request.form.get('password')
     confirmedPassword = request.form.get('confirm-password')
+    validPassword = auth.validate_password(password) 
+    validConfirmed = auth.validate_password(confirmedPassword)
+    if validPassword != True: 
+        flash("Password does not meet requirnments") 
+    if password == confirmedPassword: 
+        salt, hashed_password = database_handler.salt_and_hash_password(password)
+        database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
     if password != confirmedPassword: 
-        #the flash functio is from Flask which just displays a temp message 
         flash("Passwords do not match") 
         #return redirect(url_for("registration_form")) #need to adjust regist.... 
-    salt, hashed_password = database_handler.salt_and_hash_password(password)
-    try: 
-        database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
-    except Exception as e: #try if else statments instead of try and except 
-        flash(f"Error during registration: {str(e)}")
-    return redirect(url_for("LoginPage.html"))
+    # try: 
+    #     database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
+    # except Exception as e: #try if else statments instead of try and except 
+    #     flash(f"Error during registration: {str(e)}")
+    # return redirect(url_for("LoginPage.html"))
         
 
     # response = send_from_directory("public", "/register")
