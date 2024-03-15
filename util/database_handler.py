@@ -10,7 +10,7 @@ chat_collection = db["chat"]   #collection for chat
 #checks if user already exists and adds username + salt + hash into database 
 
 
-def insert_user(first_name: str, last_name: str, email: str, username: str, salt: str, hashedPassword: str): 
+def insert_user(first_name, last_name, email, username, salt, hashedPassword):
     if user_collection.find_one({"username": username}): 
         raise Exception("Username already exists.") 
     user_collection.insert_one({
@@ -19,7 +19,8 @@ def insert_user(first_name: str, last_name: str, email: str, username: str, salt
         "email": email, 
         "username": username,
         "salt": salt,
-        "password": hashedPassword
+        "password": hashedPassword,
+        "auth_token": ""
         }) 
 
 
@@ -27,6 +28,5 @@ def insert_user(first_name: str, last_name: str, email: str, username: str, salt
 def salt_and_hash_password(password):
     salt = secrets.token_hex(16)
     salted_password = password + salt
-    hashed_password = hashlib.sha256(salted_password.encode()).hexdigest()
-    return (salt, hashed_password) 
-
+    salt_hashed_password = hashlib.sha256(salted_password.encode()).hexdigest()
+    return salt, salt_hashed_password
