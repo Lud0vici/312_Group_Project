@@ -47,14 +47,14 @@ def serve_registration():
     if password != confirmedPassword: 
         #the flash functio is from Flask which just displays a temp message 
         flash("Passwords do not match") 
-        return redirect(url_for("registration_form")) #need to adjust regist.... 
+        #return redirect(url_for("registration_form")) #need to adjust regist.... 
     salt, hashed_password = database_handler.salt_and_hash_password(password)
     try: 
         database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
     except Exception as e: #try if else statments instead of try and except 
-        flash(str(e))
-        return redirect(url_for("serve_login_page")) #need to adjust serve... 
-
+        flash(f"Error during registration: {str(e)}")
+    return redirect(url_for("LoginPage.html"))
+        
 
     # response = send_from_directory("public", "/register")
     # add_no_sniff(response)
