@@ -84,7 +84,7 @@ def serve_login():
             hashed_token = hashlib.sha256(token.encode()).hexdigest()
             database_handler.user_collection.update_one({"username": username}, {"$set": {"auth_token": hashed_token}})
             response = make_response()
-            response.set_cookie("authentication-token", token, httponly=True, ex)
+            response.set_cookie("authentication-token", token, httponly=True, max_age=3600)
 
     pass
 
