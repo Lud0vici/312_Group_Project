@@ -5,9 +5,8 @@ from util import database_handler
 from util import auth 
 import hashlib
 
-
-
 app = Flask(__name__)
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 def add_no_sniff(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -56,17 +55,16 @@ def serve_registration():
     confirmedPassword = user_credentials[5]
     validPassword = auth.validate_password(password) 
     user_data = database_handler.user_collection.find_one({"username": username})
-    userToLookUp = user_data[str(username)] 
-    if userToLookUp is not None: 
+    if user_data is not None: 
         flash("Username already taken!")
-    else: 
-        if validPassword != True: 
-            flash("Password does not meet requirnments") 
-        if password == confirmedPassword: 
-            salt, hashed_password = database_handler.salt_and_hash_password(password)
-            database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
-        if password != confirmedPassword: 
-            flash("Passwords do not match") 
+    if validPassword != True: 
+        flash("Password does not meet requirnments") 
+    if password == confirmedPassword: 
+        salt, hashed_password = database_handler.salt_and_hash_password(password)
+        database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
+    if password != confirmedPassword: 
+        flash("Passwords do not match") 
+    return redirect("/", code=302)
         #return redirect(url_for("registration_form")) #need to adjust regist.... 
     # try: 
     #     database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
