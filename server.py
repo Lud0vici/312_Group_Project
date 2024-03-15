@@ -49,14 +49,18 @@ def serve_registration():
     password = user_credentials[4]
     confirmedPassword = user_credentials[5]
     validPassword = auth.validate_password(password) 
-    validConfirmed = auth.validate_password(confirmedPassword)
-    if validPassword != True: 
-        flash("Password does not meet requirnments") 
-    if password == confirmedPassword: 
-        salt, hashed_password = database_handler.salt_and_hash_password(password)
-        database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
-    if password != confirmedPassword: 
-        flash("Passwords do not match") 
+    user_data = database_handler.user_collection.find_one({"username": username})
+    userToLookUp = user_data[str(username)] 
+    if userToLookUp is not None: 
+        flash("Username already taken!")
+    else: 
+        if validPassword != True: 
+            flash("Password does not meet requirnments") 
+        if password == confirmedPassword: 
+            salt, hashed_password = database_handler.salt_and_hash_password(password)
+            database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
+        if password != confirmedPassword: 
+            flash("Passwords do not match") 
         #return redirect(url_for("registration_form")) #need to adjust regist.... 
     # try: 
     #     database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
