@@ -2,7 +2,8 @@ import secrets
 import socketserver
 from flask import Flask, send_from_directory, request, redirect, url_for, flash, make_response
 from util import database_handler
-
+from util import auth 
+import hashlib
 
 
 app = Flask(__name__)
