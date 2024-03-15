@@ -1,40 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login Page</title>
     <meta charset="UTF-8">
-    <!-- This is for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/style.css"/>
+    <title>Login Page</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
     <script src="/functions.js"></script>
 </head>
 
 <body onload="welcome();">
-
+  
 <body>
-
-    <div style="text-align: center;">
-
-        <div>
-            <img src="/rocket_ball.png" class="rocket_ball"/>
+    <div class="login-container">
+        <div class="left-side">
+          <h1>Team Rocket's Restaurant Review</h1>
+          <img src="/rocket_ball.png" class="rocket_ball"/>
         </div>
-
-        <h1>Team Rocket’s Restaurant Review</h1>
-        <p1 id="intro">Welcome to Team Rocket's app. Login here!</p1>
-        <form action="/login" method="post">
-            <div>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit">Login</button>
-        </form>
-
+        <div class="right-side">
+            <h2>Login</h2>
+            <p1>Welcome back to Team Rocket's App!</p1>
+          <form action="/login" method="post">
+              <div>
+                  <input type="text" id="username" name="username" placeholder="Username" required>
+              </div>
+              <div>
+                  <input type="password" id="password" name="password" placeholder="Password" required>
+              </div>
+              <button type="submit">Login</button>
+              <br>
+              <a href="RegistrationPage.html">Already have an account? Click here!</a>
+          </form>
+          
+        </div>
     </div>
-
 </body>
-
 </html>
