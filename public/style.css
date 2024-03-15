@@ -17,17 +17,14 @@ body {
 }
 
 .left-side {
-  color: white;
-  display: flex;
-  justify-content: center; /* Center content horizontally */
-  align-items: top; /* Center content vertically */
-  width: 60%; /* Set width to 60% of the viewport */
-  height: 100vh; /* Set height to 75% of the viewport height */
-
-  position: relative;
-
-  
-}
+    color: white;
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    width: 60%; /* Set width to 60% of the viewport */
+    height: 100vh; /* Set height to 100% of the viewport height */
+    position: relative;
+    flex-direction: column;
+  } 
 
 .left-side h1 {
   margin-bottom: 20px;
@@ -87,4 +84,9 @@ button {
 
 button:hover {
     background-color: #6a1b9a;
+}
+
+.rocket_ball {
+    height: 25%;
+    width: 25%;
 }
