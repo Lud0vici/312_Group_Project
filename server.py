@@ -62,6 +62,7 @@ def serve_registration():
     validPassword = auth.validate_password(password)
     # print("checking database")
     user_data = user_collection.find_one({"username": username})   #error
+    user_email = user_collection.find_one({"email": email})
     if user_data is not None:       #needs more testing when login and homepage are created
         # flash("Username already taken!")
         response = make_response("Username already taken!")
@@ -70,15 +71,15 @@ def serve_registration():
         #return redirect(url_for('serve_registration_page'))
         return response
         # return render_template("RegistrationPage.html", error_message="Username already taken!")
-    elif user_data["email"]:
-        response = make_response("Email is associated with an account")
+    elif user_email is not None:
+        response = make_response("Email is associated with an account!")
         add_no_sniff(response)
         response.status_code = 404
         # return redirect(url_for('serve_registration_page'))
         return response
     elif validPassword != True:
         # flash("Password does not meet requirements")
-        response = make_response("Password does not meet requirements")
+        response = make_response("Password does not meet requirements!")
         add_no_sniff(response)
         response.status_code = 404
         #return redirect(url_for('serve_registration_page'))
@@ -86,7 +87,7 @@ def serve_registration():
         # return render_template("RegistrationPage.html", error_message="Password does not meet requirements")
     elif password != confirmedPassword:
         # flash("Passwords do not match")
-        response = make_response("Passwords do not match")
+        response = make_response("Passwords do not match!")
         add_no_sniff(response)
         response.status_code = 404
         #return redirect(url_for('serve_registration_page'))
