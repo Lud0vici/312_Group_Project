@@ -22,7 +22,7 @@ def extract_credentials(request):
     return [first_name, last_name, email, username, password, confirm_password]
 
 def validate_password(password):
-    if len(password) < 12:
+    if len(password) < 8:
         return False
     
     if not any(c.islower() for c in password):
