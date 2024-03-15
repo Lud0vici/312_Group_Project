@@ -83,10 +83,17 @@ def serve_login():
             token = secrets.token_urlsafe(32)
             hashed_token = hashlib.sha256(token.encode()).hexdigest()
             database_handler.user_collection.update_one({"username": username}, {"$set": {"auth_token": hashed_token}})
-            response = make_response()
-            response.set_cookie("authentication-token", token, httponly=True, max_age=3600)
+            response = make_response()      #make a response with an empty body
+            response.set_cookie("authentication-token", token, httponly=True, max_age=3600)     #set auth-token cookie
+            return response
+        else:
+            flash("Incorrect password")
 
+
+@app.route("/logout")
+def serve_logout():     #serve logout button when we have the user on our actual page, not login or registration
     pass
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
