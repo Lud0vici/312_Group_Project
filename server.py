@@ -70,6 +70,12 @@ def serve_registration():
         #return redirect(url_for('serve_registration_page'))
         return response
         # return render_template("RegistrationPage.html", error_message="Username already taken!")
+    elif user_data["email"]:
+        response = make_response("Email is associated with an account")
+        add_no_sniff(response)
+        response.status_code = 404
+        # return redirect(url_for('serve_registration_page'))
+        return response
     elif validPassword != True:
         # flash("Password does not meet requirements")
         response = make_response("Password does not meet requirements")
