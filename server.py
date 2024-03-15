@@ -1,6 +1,6 @@
 import secrets
 import socketserver
-from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template
+from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, session
 from util import database_handler
 from util import auth
 from util.database_handler import user_collection
@@ -133,6 +133,7 @@ def serve_login():
             expire_date = datetime.datetime.now()
             expire_date = expire_date + datetime.timedelta(minutes=60)
             response.set_cookie("authentication-token", token, httponly=True, expires=expire_date, max_age=3600)     #set auth-token cookie
+            session['username'] = username
             return response
         else:
             #flash("Incorrect password")
@@ -145,6 +146,8 @@ def serve_login():
 def serve_homepage():
     response = send_from_directory("src", "HomePage.html")
     add_no_sniff(response)
+    username = session.get('username')
+
     return response
 
 @app.route("/logout", methods=["POST"])
@@ -158,7 +161,8 @@ def serve_logout():     #serve logout button when we have the user on our actual
         user_data = user_collection.find_one({"auth_token": hashed_token})
         username = user_data["username"]
         user_collection.update_one({"username": username}, {"$set": {"auth_token": ""}})
-
+        session.clear()
+        response.delete_cookie("session")
     return response
 
 
