@@ -66,16 +66,6 @@ def serve_registration():
         flash("Passwords do not match") 
     return redirect("/", code=302)
         #return redirect(url_for("registration_form")) #need to adjust regist.... 
-    # try: 
-    #     database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
-    # except Exception as e: #try if else statments instead of try and except 
-    #     flash(f"Error during registration: {str(e)}")
-    # return redirect(url_for("LoginPage.html"))
-        
-
-    # response = send_from_directory("public", "/register")
-    # add_no_sniff(response)
-    # return response
 
 @app.route("/login", methods=["POST"])
 def serve_login():
