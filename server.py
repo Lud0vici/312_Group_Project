@@ -143,11 +143,23 @@ def serve_login():
 
 @app.route("/homepage")
 def serve_homepage():
-    pass
+    response = send_from_directory("src", "HomePage.html")
+    add_no_sniff(response)
+    return response
 
-@app.route("/logout")
+@app.route("/logout", methods=["POST"])
 def serve_logout():     #serve logout button when we have the user on our actual page, not login or registration
-    pass
+    auth_token = request.cookies.get("authentication-token", None)
+    response = redirect(url_for('serve_login_page'))
+    add_no_sniff(response)
+    if auth_token is not None:
+        response.delete_cookie('authentication-token')
+        hashed_token = hashlib.sha256(auth_token.encode()).hexdigest()
+        user_data = user_collection.find_one({"auth_token": hashed_token})
+        username = user_data["username"]
+        user_collection.update_one({"username": username}, {"$set": {"auth_token": ""}})
+
+    return response
 
 
 if __name__ == "__main__":
