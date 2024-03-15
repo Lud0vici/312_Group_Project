@@ -5,42 +5,61 @@
     <meta charset="UTF-8">
     <!-- This is for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="style.css"/>
+    <link rel="stylesheet" type="text/css" href="login-registration.css"/>
     <script src="functions.js"></script>
 </head>
 
 
 
 <body onload="welcome();">
-
-    <h1>Team Rocket’s Restaurant Review</h1>
-    <p1 id="intro">Welcome to Team Rocket's app. Register here!</p1>
-    <form id="registration-form" action="/register" method="post">
-        <label for="first-name">First Name:</label>
-        <input type="text" id="first-name" name="first-name" required>
-        <br>
-        
-        <label for="last-name">Last Name:</label>
-        <input type="text" id="last-name" name="last-name" required>
-        <br>
-        
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <br>
-        
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        
-        <label for="confirm-password">Confirm Password:</label>
-        <input type="password" id="confirm-password" name="confirm-password" required>
-        <br>
-        
-        <input type="submit" value="Register">
-    </form>
+    <div class="login-register-container">
+        <div class="left-side">
+            <h1>Team Rocket's Restaurant Review</h1>
+            <p1 id="intro"></p1>
+            <br>
+            <img src="/rocket_ball.png" class="rocket_ball"/>
+        </div>
+        <div class="right-side">
+            <h2>Register</h2>
+            <p1>Welcome to Team Rocket's app. Register here!</p1>
+            <form id="registration-form" action="/register" method="post">
+                <label for="first-name"></label>
+                <input type="text" id="first-name" name="first-name" placeholder="First Name" required>
+                <br>
+                
+                <label for="last-name"></label>
+                <input type="text" id="last-name" name="last-name" placeholder="Last Name" required>
+                <br>
+                
+                <label for="email"></label>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <br>
+                
+                <label for="username"></label>
+                <input type="text" id="username" name="username" placeholder="Username" required>
+                <br>
+                
+                <label for="password"></label>
+                <input type="password" id="password" name="password" placeholder="Password" required onkeyup="checkPassword()">
+                <br>
+                
+                <label for="confirm-password"></label>
+                <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" required>
+                <!-- Checklist for password requirements -->
+                <ul id="password-checklist">
+                    <li id="length" class="uncompleted">8 characters</li>
+                    <li id="uppercase" class="uncompleted">Uppercase letter</li>
+                    <li id="lowercase" class="uncompleted">Lowercase letter</li>
+                    <li id="number" class="uncompleted">One number</li>
+                    <li id="special" class="uncompleted">One special character</li>
+                    <li id="match" class="uncompleted">Passwords match</li>
+                </ul>
+                
+                <button type="submit">Register</button>
+                <a href="/">Have an account? Click here!</a>
+                <br>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
