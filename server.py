@@ -18,6 +18,12 @@ def serve_login_page():
     add_no_sniff(response)
     return response
 
+@app.route("/RegistrationPage.html")
+def serve_registration_page():
+    response = send_from_directory("src", "RegistrationPage.html")
+    add_no_sniff(response)
+    return response
+
 @app.route("/functions.js")
 def serve_javascript():
     response = send_from_directory("public", "functions.js")
