@@ -1,9 +1,12 @@
 import secrets
 import socketserver
-from flask import Flask, send_from_directory, request, redirect, url_for, flash, make_response
+from flask import Flask, send_from_directory, request, redirect, url_for, flash, make_response, jsonify
 from util import database_handler
-from util import auth 
+from util import auth
+from util.database_handler import user_collection
 import hashlib
+
+
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -47,24 +50,44 @@ def serve_registration():
     user_credentials = auth.extract_credentials(request)
 
      # assumed that user_credentials returns ["first", "last", "email", "username", "pass", "confirmed-pass"]
-    first_name = user_credentials[0] 
+    first_name = user_credentials[0]
     last_name = user_credentials[1]
     email = user_credentials[2]
     username = user_credentials[3]
+    print(username)
     password = user_credentials[4]
     confirmedPassword = user_credentials[5]
-    validPassword = auth.validate_password(password) 
-    user_data = database_handler.user_collection.find_one({"username": username})
-    if user_data is not None: 
+    # print("before auth validate")
+    validPassword = auth.validate_password(password)
+    # print("checking database")
+    user_data = user_collection.find_one({"username": username})   #error
+    # if not user_data:
+    #     return redirect("/", code=302)
+    # print("before checking user_data")
+    if user_data is not None:
         flash("Username already taken!")
-    if validPassword != True: 
-        flash("Password does not meet requirnments") 
-    if password == confirmedPassword: 
+        response = make_response("Username already taken!")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+    elif validPassword != True:
+        flash("Password does not meet requirenments")
+        response = make_response("Password does not meet requirements")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+    elif password != confirmedPassword:
+        flash("Passwords do not match")
+        response = make_response("Passwords do not match")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+    else:
         salt, hashed_password = database_handler.salt_and_hash_password(password)
         database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
-    if password != confirmedPassword: 
-        flash("Passwords do not match") 
-    return redirect("/", code=302)
+
+        return redirect("/", code=302)
+
         #return redirect(url_for("registration_form")) #need to adjust regist.... 
     # try: 
     #     database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
