@@ -12,16 +12,17 @@ chat_collection = db["chat"]   #collection for chat
 
 def insert_user(first_name, last_name, email, username, salt, hashedPassword):
     if user_collection.find_one({"username": username}): 
-        raise Exception("Username already exists.") 
-    user_collection.insert_one({
-        "first-name": first_name,
-        "last-name": last_name, 
-        "email": email, 
-        "username": username,
-        "salt": salt,
-        "password": hashedPassword,
-        "auth_token": ""
-        }) 
+        raise Exception("Username already exists.")
+    else:
+        user_collection.insert_one({
+            "first-name": first_name,
+            "last-name": last_name,
+            "email": email,
+            "username": username,
+            "salt": salt,
+            "password": hashedPassword,
+            "auth_token": ""
+            })
 
 
 
