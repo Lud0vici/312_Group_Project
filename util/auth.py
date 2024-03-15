@@ -1,16 +1,24 @@
-from urllib.parse import parse_qs, unquote
+from urllib.parse import unquote_plus
 import string
 
+app = Flask(__name__)
+
 def extract_credentials(request):
-    body = request.body.decode()
-    parsed_body = parse_qs(body)
+    first_name = request.form.get('first-name', '')
+    last_name = request.form.get('last-name', '')
+    email = request.form.get('email', '')
+    username = request.form.get('username', '')
+    password = request.form.get('password', '')
+    confirm_password = request.form.get('confirm-password', '')
 
-    username = parsed_body.get('username', [''])[0]
-    password = parsed_body.get('password', [''])[0]
+    first_name = unquote_plus(first_name)
+    last_name = unquote_plus(last_name)
+    email = unquote_plus(email)
+    username = unquote_plus(username)
+    password = unquote_plus(password)
+    confirm_password = unquote_plus(confirm_password)
 
-    password = unquote(password)
-
-    credentials = [username, password]
+    credentials = [first_name, last_name, email, username, password, confirm_password]
 
     return credentials
 
