@@ -1,6 +1,6 @@
 import secrets
 import socketserver
-from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template
+from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, session
 from util import database_handler
 from util import auth
 from util.database_handler import user_collection
@@ -71,6 +71,11 @@ def serve_registration():
         #return redirect(url_for('serve_registration_page'))
         return response
         # return render_template("RegistrationPage.html", error_message="Username already taken!")
+    elif auth.validate_username(username) is False:
+        response = make_response("Username is invalid!")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
     elif user_email is not None:
         response = make_response("Email is associated with an account!")
         add_no_sniff(response)
@@ -126,6 +131,8 @@ def serve_login():
         curr_user_password = hashlib.sha256(salted_password.encode()).hexdigest()
 
         if curr_user_password == user_data["password"]:     #if password matches the one found in the user_collection db
+            session["username"] = username
+            print(session)
             token = secrets.token_urlsafe(32)
             hashed_token = hashlib.sha256(token.encode()).hexdigest()
             database_handler.user_collection.update_one({"username": username}, {"$set": {"auth_token": hashed_token}})
@@ -145,6 +152,8 @@ def serve_login():
 def serve_homepage():
     response = send_from_directory("src", "HomePage.html")
     add_no_sniff(response)
+    username = session.get("username")
+    #response.set_cookie("username", username)       #dont need, only testing username
     return response
 
 @app.route("/logout", methods=["POST"])
@@ -156,7 +165,7 @@ def serve_logout():     #serve logout button when we have the user on our actual
         response.delete_cookie('authentication-token')
         hashed_token = hashlib.sha256(auth_token.encode()).hexdigest()
         user_data = user_collection.find_one({"auth_token": hashed_token})
-        username = user_data["username"]
+        username = user_data["username"]    #why giving None?
         user_collection.update_one({"username": username}, {"$set": {"auth_token": ""}})
 
     return response
