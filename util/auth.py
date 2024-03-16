@@ -25,7 +25,7 @@ def extract_credentials(request):
 
 def validate_username(username):
     for char in username:
-        if char == "&" or "<" or ">":
+        if char in ("&", "<", ">"):
             return False
 
     return True

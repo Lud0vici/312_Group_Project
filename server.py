@@ -32,9 +32,9 @@ def serve_javascript():
     add_no_sniff(response)
     return response
 
-@app.route("/style.css")
+@app.route("/login-registration.css")
 def serve_css():
-    response = send_from_directory("public", "style.css")
+    response = send_from_directory("public", "login-registration.css")
     add_no_sniff(response)
     return response
 
