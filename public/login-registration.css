@@ -4,8 +4,8 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.login-container {
-  background-color: #4c00ff;
+.login-register-container {
+  background-color: #ff5e5e;
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: medium;
   position: static;
@@ -67,6 +67,7 @@ form {
 
 input[type="text"],
 input[type="password"],
+input[type="email"],
 button {
     padding: 10px;
     margin-bottom: 10px;
@@ -76,17 +77,31 @@ button {
 }
 
 button {
-    background-color: purple;
+    background-color: #6a1b9a;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #6a1b9a;
+    background-color: #04d9ff;
 }
 
 .rocket_ball {
     height: 25%;
     width: 25%;
+}
+
+/* Style for the checklist items */
+#password-checklist li {
+    color: gray;
+    font-size: small;
+}
+#password-checklist li.completed {
+    color: green;
+    font-size: small;
+}
+#password-checklist li.uncompleted {
+    color: red;
+    font-size: small;
 }
