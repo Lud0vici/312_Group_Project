@@ -4,8 +4,8 @@ body {
     font-family: Arial, sans-serif;
 }
 
-.login-container {
-  background-color: #4c00ff;
+.login-register-container {
+  background-color: #ff5e5e;
   font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-size: medium;
   position: static;
@@ -17,17 +17,14 @@ body {
 }
 
 .left-side {
-  color: white;
-  display: flex;
-  justify-content: center; /* Center content horizontally */
-  align-items: top; /* Center content vertically */
-  width: 60%; /* Set width to 60% of the viewport */
-  height: 100vh; /* Set height to 75% of the viewport height */
-
-  position: relative;
-
-  
-}
+    color: white;
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    width: 60%; /* Set width to 60% of the viewport */
+    height: 100vh; /* Set height to 100% of the viewport height */
+    position: relative;
+    flex-direction: column;
+  } 
 
 .left-side h1 {
   margin-bottom: 20px;
@@ -70,6 +67,7 @@ form {
 
 input[type="text"],
 input[type="password"],
+input[type="email"],
 button {
     padding: 10px;
     margin-bottom: 10px;
@@ -79,12 +77,31 @@ button {
 }
 
 button {
-    background-color: purple;
+    background-color: #6a1b9a;
     color: white;
     border: none;
     cursor: pointer;
 }
 
 button:hover {
-    background-color: #6a1b9a;
+    background-color: #04d9ff;
+}
+
+.rocket_ball {
+    height: 25%;
+    width: 25%;
+}
+
+/* Style for the checklist items */
+#password-checklist li {
+    color: gray;
+    font-size: small;
+}
+#password-checklist li.completed {
+    color: green;
+    font-size: small;
+}
+#password-checklist li.uncompleted {
+    color: red;
+    font-size: small;
 }

@@ -1,11 +1,13 @@
 import secrets
 import socketserver
-from flask import Flask, send_from_directory, request, redirect, url_for, flash, make_response, render_template
+from flask import Flask, send_from_directory, request, redirect, url_for, flash, make_response
 from util import database_handler
-from util import auth 
+from util import auth
+from util.database_handler import user_collection
 import hashlib
+from datetime import datetime, timedelta
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="src")
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 def add_no_sniff(response):
@@ -50,9 +52,9 @@ def serve_javascript():
     add_no_sniff(response)
     return response
 
-@app.route("/style.css")
+@app.route("/login-registration.css")
 def serve_css():
-    response = send_from_directory("public", "style.css")
+    response = send_from_directory("public", "login-registration.css")
     add_no_sniff(response)
     return response
 
@@ -67,36 +69,49 @@ def serve_rocket_ball():
 def serve_registration():
     user_credentials = auth.extract_credentials(request)
 
-     # assumed that user_credentials returns ["first", "last", "email", "username", "pass", "confirmed-pass"]
-    first_name = user_credentials[0] 
+    # assumed that user_credentials returns ["first", "last", "email", "username", "pass", "confirmed-pass"]
+    first_name = user_credentials[0]
     last_name = user_credentials[1]
     email = user_credentials[2]
     username = user_credentials[3]
     password = user_credentials[4]
     confirmedPassword = user_credentials[5]
-    validPassword = auth.validate_password(password) 
-    user_data = database_handler.user_collection.find_one({"username": username})
-    if user_data is not None: 
-        flash("Username already taken!")
-    if validPassword != True: 
-        flash("Password does not meet requirnments") 
-    if password == confirmedPassword: 
+
+    validPassword = auth.validate_password(password)
+    user_data = user_collection.find_one({"username": username})   #error
+    user_email = user_collection.find_one({"email": email})
+
+    if user_data is not None:
+        response = make_response("Username already taken!")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+    elif auth.validate_username(username) is False:
+        response = make_response("Username is invalid!")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+    elif user_email is not None:
+        response = make_response("Email is associated with an account!")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+    elif validPassword != True:
+        response = make_response("Password does not meet requirements!")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+    elif password != confirmedPassword:
+        response = make_response("Passwords do not match!")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+    else:
         salt, hashed_password = database_handler.salt_and_hash_password(password)
         database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
-    if password != confirmedPassword: 
-        flash("Passwords do not match") 
-    return redirect("/", code=302)
-        #return redirect(url_for("registration_form")) #need to adjust regist.... 
-    # try: 
-    #     database_handler.insert_user(first_name, last_name, email, username, salt, hashed_password)
-    # except Exception as e: #try if else statments instead of try and except 
-    #     flash(f"Error during registration: {str(e)}")
-    # return redirect(url_for("LoginPage.html"))
-        
+        print(database_handler.user_collection.find_one({"username": username})["username"])
+        return redirect(url_for("serve_login_page"))
 
-    # response = send_from_directory("public", "/register")
-    # add_no_sniff(response)
-    # return response
 
 @app.route("/login", methods=["POST"])
 def serve_login():
@@ -128,10 +143,23 @@ def serve_login():
     # If user not found or incorrect password, redirect back to login page
     return redirect("/login")
 
-@app.route("/logout")
+
+@app.route("/logout", methods=["POST"])
 def serve_logout():     #serve logout button when we have the user on our actual page, not login or registration
-    pass
+    auth_token = request.cookies.get("authentication-token", None)
+    response = redirect(url_for('serve_login_page'))
+    add_no_sniff(response)
+    if auth_token is not None:
+        response.delete_cookie('authentication-token')
+        hashed_token = hashlib.sha256(auth_token.encode()).hexdigest()
+        user_data = user_collection.find_one({"auth_token": hashed_token})
+        username = user_data["username"]    #why giving None?
+        user_collection.update_one({"username": username}, {"$set": {"auth_token": ""}})
+        session.clear()
+        response.delete_cookie("session")
+    return response
 
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
+

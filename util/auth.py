@@ -4,6 +4,7 @@ from flask import Flask, request
 
 def extract_credentials(request):
     # Extract form data from Flask request
+
     first_name = request.form.get('first-name', '')
     last_name = request.form.get('last-name', '')
     email = request.form.get('email', '')
@@ -21,7 +22,17 @@ def extract_credentials(request):
 
     return [first_name, last_name, email, username, password, confirm_password]
 
+
+def validate_username(username):
+    for char in username:
+        if char in ("&", "<", ">"):
+            return False
+
+    return True
+
+
 def validate_password(password):
+    # check which special characters you are checking for, so we can properly relay that to users in the front end
     if len(password) < 8:
         return False
     
@@ -39,6 +50,24 @@ def validate_password(password):
         return False
 
     return True
+
+def escape_HTML(request):       #can edit the parameter later to suit needs, rn it is a request, we can always change back to request body
+    request_input = request.body
+    char_dict = {}
+    char_dict["&"] = "&amp;"
+    char_dict["<"] = "&lt;"
+    char_dict[">"] = "&gt;"
+
+    new_safe_input = ""
+
+    for char in request_input:
+        if char in char_dict:
+            new_safe_input += char_dict[char]
+        else:
+            new_safe_input += char
+
+    request.body = new_safe_input
+    return request
 
 def test_extract_credentials1():
     # Simulate form data
