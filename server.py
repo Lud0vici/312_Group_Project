@@ -1,6 +1,6 @@
 import secrets
 import socketserver
-from flask import Flask, send_from_directory, request, redirect, url_for, flash, make_response
+from flask import Flask, send_from_directory, request, redirect, url_for, flash, make_response, render_template
 from util import database_handler
 from util import auth 
 import hashlib
@@ -13,9 +13,30 @@ def add_no_sniff(response):
 
 @app.route("/")
 def serve_login_page():
-    response = send_from_directory('src', 'LoginPage.html')
-    add_no_sniff(response)
-    return response
+    # Access the request object to retrieve the authentication token cookie
+    auth_token = request.cookies.get("authentication-token")
+    username = "Guest"
+
+    # Now you can use the auth_token to retrieve the username or perform any other actions
+    if auth_token:
+        user_data = database_handler.user_collection.find_one({"auth_token": auth_token})
+        if user_data:
+            username = user_data.get("username")
+            # You can now use the username or perform any other actions
+            # For example, you might render the login page with the username displayed
+    
+    # Read the HTML file and return its contents as a response
+    with open("LoginPage.html", "r") as file:
+        html_content = file.read()
+    
+    # Replace the placeholder with the actual username
+    html_content = html_content.replace("{{ username }}", username)
+
+    # Set the Content-Type header to indicate that the response contains HTML
+    headers = {"Content-Type": "text/html"}
+
+    # Create a response with the HTML content
+    return html_content, 200, headers
 
 @app.route("/RegistrationPage.html")
 def serve_registration_page():
@@ -79,33 +100,33 @@ def serve_registration():
 
 @app.route("/login", methods=["POST"])
 def serve_login():
+    # Extract credentials to find user data in user collection
     user_credentials = auth.extract_credentials(request)
-
-    # assumed that user_credentials returns ["first", "last", "email", "username", "pass", "confirmed-pass"]
-
     username = user_credentials[3]
     password = user_credentials[4]
-
     user_data = database_handler.user_collection.find_one({"username": username})
 
-
-    if user_data is None:   #if user not found in db, flash "User not found"
+    if user_data is None:
         flash("User not found")
-    else:   #if user is found, we now have to check the password
+    else:
         salt = user_data["salt"]
         salted_password = password + salt
-        curr_user_password = hashlib.sha256(salted_password.encode()).hexdigest()
+        hashed_password = hashlib.sha256(salted_password.encode()).hexdigest() # Hashes salted_password
 
-        if curr_user_password == user_data["password"]:     #if password matches the one found in the user_collection db
-            token = secrets.token_urlsafe(32)
-            hashed_token = hashlib.sha256(token.encode()).hexdigest()
-            database_handler.user_collection.update_one({"username": username}, {"$set": {"auth_token": hashed_token}})
-            response = make_response()      #make a response with an empty body
-            response.set_cookie("authentication-token", token, httponly=True, max_age=3600)     #set auth-token cookie
+        if hashed_password == user_data["password"]:
+            auth_token = secrets.token_urlsafe(32)
+            hashed_auth_token = hashlib.sha256(auth_token.encode()).hexdigest()
+            database_handler.user_collection.update_one({"username": username}, {"$set": {"auth_token": hashed_auth_token}})
+            
+            # Serve response that sets the authentication token and redirects to the homepage
+            response = redirect("/", code=302)
+            response.set_cookie("authentication-token", auth_token, httponly=True, max_age=3600) # Set authentication token
             return response
         else:
             flash("Incorrect password")
 
+    # If user not found or incorrect password, redirect back to login page
+    return redirect("/login")
 
 @app.route("/logout")
 def serve_logout():     #serve logout button when we have the user on our actual page, not login or registration
