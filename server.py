@@ -1,6 +1,6 @@
 import secrets
 import socketserver
-from flask import Flask, send_from_directory, request, redirect, url_for, flash, make_response
+from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, session
 from util import database_handler
 from util import auth
 from util.database_handler import user_collection
@@ -15,30 +15,9 @@ def add_no_sniff(response):
 
 @app.route("/")
 def serve_login_page():
-    # Access the request object to retrieve the authentication token cookie
-    auth_token = request.cookies.get("authentication-token")
-    username = "Guest"
-
-    # Now you can use the auth_token to retrieve the username or perform any other actions
-    if auth_token:
-        user_data = database_handler.user_collection.find_one({"auth_token": auth_token})
-        if user_data:
-            username = user_data.get("username")
-            # You can now use the username or perform any other actions
-            # For example, you might render the login page with the username displayed
-    
-    # Read the HTML file and return its contents as a response
-    with open("LoginPage.html", "r") as file:
-        html_content = file.read()
-    
-    # Replace the placeholder with the actual username
-    html_content = html_content.replace("{{ username }}", username)
-
-    # Set the Content-Type header to indicate that the response contains HTML
-    headers = {"Content-Type": "text/html"}
-
-    # Create a response with the HTML content
-    return html_content, 200, headers
+    response = send_from_directory('src', 'LoginPage.html')
+    add_no_sniff(response)
+    return response
 
 @app.route("/RegistrationPage.html")
 def serve_registration_page():
@@ -64,11 +43,10 @@ def serve_rocket_ball():
     add_no_sniff(response)
     return response
 
-#edit function so that it calls on insertUser to put into database 
+# edit function so that it calls on insertUser to put into database 
 @app.route("/register", methods=['POST'])
 def serve_registration():
     user_credentials = auth.extract_credentials(request)
-
     # assumed that user_credentials returns ["first", "last", "email", "username", "pass", "confirmed-pass"]
     first_name = user_credentials[0]
     last_name = user_credentials[1]
@@ -76,11 +54,9 @@ def serve_registration():
     username = user_credentials[3]
     password = user_credentials[4]
     confirmedPassword = user_credentials[5]
-
     validPassword = auth.validate_password(password)
     user_data = user_collection.find_one({"username": username})   #error
     user_email = user_collection.find_one({"email": email})
-
     if user_data is not None:
         response = make_response("Username already taken!")
         add_no_sniff(response)
@@ -112,37 +88,69 @@ def serve_registration():
         print(database_handler.user_collection.find_one({"username": username})["username"])
         return redirect(url_for("serve_login_page"))
 
-
 @app.route("/login", methods=["POST"])
 def serve_login():
-    # Extract credentials to find user data in user collection
     user_credentials = auth.extract_credentials(request)
+    # assumed that user_credentials returns ["first", "last", "email", "username", "pass", "confirmed-pass"]
     username = user_credentials[3]
     password = user_credentials[4]
     user_data = database_handler.user_collection.find_one({"username": username})
-
     if user_data is None:
-        flash("User not found")
+        response = make_response("User not found")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
     else:
         salt = user_data["salt"]
         salted_password = password + salt
-        hashed_password = hashlib.sha256(salted_password.encode()).hexdigest() # Hashes salted_password
-
-        if hashed_password == user_data["password"]:
-            auth_token = secrets.token_urlsafe(32)
-            hashed_auth_token = hashlib.sha256(auth_token.encode()).hexdigest()
-            database_handler.user_collection.update_one({"username": username}, {"$set": {"auth_token": hashed_auth_token}})
-            
-            # Serve response that sets the authentication token and redirects to the homepage
-            response = redirect("/", code=302)
-            response.set_cookie("authentication-token", auth_token, httponly=True, max_age=3600) # Set authentication token
+        curr_user_password = hashlib.sha256(salted_password.encode()).hexdigest()
+        if curr_user_password == user_data["password"]:     #if password matches the one found in the user_collection db
+            session["username"] = username
+            token = secrets.token_urlsafe(32)
+            hashed_token = hashlib.sha256(token.encode()).hexdigest()
+            database_handler.user_collection.update_one({"username": username}, {"$set": {"auth_token": hashed_token}})
+            response = redirect(url_for('serve_homepage'))      #make a response with an empty body
+            expire_date = datetime.now()
+            expire_date = expire_date + timedelta(minutes=60)
+            response.set_cookie("authentication-token", token, httponly=True, expires=expire_date, max_age=3600)     #set auth-token cookie
+            session['username'] = username
+            session.permanent = True
+            app.permanent_session_lifetime = timedelta(minutes=60)
+            session.modified = True
             return response
         else:
-            flash("Incorrect password")
+            response = make_response("Incorrect password")
+            add_no_sniff(response)
+            response.status_code = 404
+            return response
 
-    # If user not found or incorrect password, redirect back to login page
-    return redirect("/login")
+@app.route("/homepage")
+def serve_homepage():
+    username = session.get("username")
+    auth_token = request.cookies.get("authentication-token")
 
+    if not username or not auth_token:
+        # If username or authentication token is not found, return 404
+        response = make_response("User data or authentication token is not found.")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+
+    hashed_token = hashlib.sha256(auth_token.encode()).hexdigest()
+    user_data = user_collection.find_one({"username": username, "auth_token": hashed_token})
+
+    if not user_data: # Auth token stored in database doesn't match with auth token stored on webpage
+        response = make_response("Authentication token is incorrect. Please re-enter the correct authentication token and refresh the page.")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+
+    with open("src/HomePage.html", "rb") as file:
+        file_contents = file.read()
+    file_contents = file_contents.replace(b"{{user}}", username.encode())
+    response = make_response(file_contents)
+    add_no_sniff(response)
+    return response
 
 @app.route("/logout", methods=["POST"])
 def serve_logout():     #serve logout button when we have the user on our actual page, not login or registration
@@ -159,7 +167,5 @@ def serve_logout():     #serve logout button when we have the user on our actual
         response.delete_cookie("session")
     return response
 
-
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
-
