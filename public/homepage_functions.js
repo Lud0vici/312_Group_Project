@@ -31,3 +31,4 @@ document.getElementById('submitPostBtn').addEventListener('click', function() {
         document.getElementById('postContent').value = '';
     }
 });
+

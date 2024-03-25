@@ -178,6 +178,22 @@ def create_chat_message():
         add_no_sniff(response)
         response.status_code = 404
         return response
+    message_content = request.form.get("message")
+    if not message_content: 
+        response = make_response("Message is empty") 
+        add_no_sniff(response)
+        response.status_code = 404
+        return response 
+    database_handler.insert_chat_message(username, message_content)
+
+    
+@app.route("/chat")
+def server_chat(): 
+    chat_messages = database_handler.chat_collection.find()
+    messages_list = [{"username": msg["username"], "message": msg["message"]} for msg in chat_messages]
+    return jsonify(messages_list)
+
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
