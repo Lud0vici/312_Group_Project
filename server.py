@@ -6,6 +6,7 @@ from util import auth
 from util.database_handler import user_collection
 import hashlib
 from datetime import datetime, timedelta
+import json 
 
 app = Flask(__name__, template_folder="src")
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -186,11 +187,19 @@ def create_chat_message():
         return response 
     database_handler.insert_chat_message(username, message_content)
 
-    
-@app.route("/chat")
-def serve_chat(): 
-    chat_messages = database_handler.chat_collection.find()
-    messages_list = [{"username": msg["username"], "message": msg["message"]} for msg in chat_messages]
+@app.route("/chat-messages", methods=["GET"])
+def get_chat_messages():
+    chat_messages = database_handler.chat_collection.find({})
+    chat_history = [] 
+    for message in chat_messages:
+        chat_entry = {"message": message["message"],"username": message["username"] }
+        chat_history.append(chat_entry)
+    chat_history_json = json.dumps(chat_history)
+    response = make_response(chat_history_json)
+    response.headers['Content-Type'] = 'application/json'
+    return response 
+
+
     
 
 
