@@ -191,9 +191,6 @@ def create_chat_message():
 def serve_chat(): 
     chat_messages = database_handler.chat_collection.find()
     messages_list = [{"username": msg["username"], "message": msg["message"]} for msg in chat_messages]
-    
-
-
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
