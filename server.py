@@ -167,5 +167,17 @@ def serve_logout():     #serve logout button when we have the user on our actual
         response.delete_cookie("session")
     return response
 
+@app.route("/chat-messages", methods=["POST"])
+def create_chat_message():
+    username = session.get("username")
+    auth_token = request.cookies.get("authentication-token")
+
+    if not username or not auth_token:
+        # If username or authentication token is not found, return 404
+        response = make_response("User data or authentication token is not found.")
+        add_no_sniff(response)
+        response.status_code = 404
+        return response
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
