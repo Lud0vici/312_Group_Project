@@ -188,10 +188,10 @@ def create_chat_message():
 
     
 @app.route("/chat")
-def server_chat(): 
+def serve_chat(): 
     chat_messages = database_handler.chat_collection.find()
     messages_list = [{"username": msg["username"], "message": msg["message"]} for msg in chat_messages]
-    return jsonify(messages_list)
+    
 
 
 
