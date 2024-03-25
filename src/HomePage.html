@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="/homepage_functions.js"></script>
   <title>Home Page</title>
 
 </head>
@@ -10,9 +11,28 @@
   <h1>Welcome to the Home Page</h1>
   <h1>{{user}}</h1>
   <br>
-  <p>You can logout by clicking the button below.</p>
-  <form id="logout-form" action="/logout" method="post">
-    <button type="submit" class="logout-button">Logout</button>
-  </form>
+  
+  <div class="navbar">
+    <form id="logout-form" action="/logout" method="post">
+      <button type="submit" class="logout-button">Logout</button>
+    </form>
+  </div>
+
+  <div class="create-post-button">
+      <button id="createPostBtn">Create a Post</button>
+  </div>
+
+  <div class="popup" id="popup">
+      <textarea id="postContent" rows="4" cols="50" placeholder="Type your post here"></textarea><br>
+      <button id="submitPostBtn">Submit</button>
+      <button id="cancelPostBtn">Cancel</button>
+  </div>
+
+  <div id="postsContainer">
+      <h2>The Feed</h2>
+      <br>
+      <!-- Posts will be dynamically added here -->
+  </div>
 </body>
 </html>
+
