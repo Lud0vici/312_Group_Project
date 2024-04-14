@@ -4,9 +4,8 @@ import secrets
 
 mongo_client = MongoClient("TeamRocketMongo")
 db = mongo_client["TeamRocketDB"] 
-user_collection = db["users"]  #hold the user information 
-chat_collection = db["chat"]   #collection for chat
-id_collection = db["ids"] # database collection containing all chat ids
+user_collection = db["users"]  # database collection containing all users
+chat_collection = db["chat"]   # database collection containing all chat messages
 
 #checks if user already exists and adds username + salt + hash into database 
 
@@ -31,7 +30,5 @@ def salt_and_hash_password(password):
     return salt, salt_hashed_password
 
 def insert_chat_message(username, message_content, message_id): 
+    message_id = str(uuid.uuid4())
     chat_collection.insert_one({"username": username, "message": message_content, "id": message_id})
-
-def create_id():
-    message_id = str(uuid.uuid4)
