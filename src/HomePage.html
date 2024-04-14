@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css" href="/public/homepageStyle.css"/>
+  <link rel="stylesheet" type="text/css" href="homepageStyle.css"/>
   <script src="/homepage_functions.js"></script>
   <title>Home Page</title>
 
@@ -45,7 +45,9 @@
 
         <form class="image-uploads" action="/upload" method="post" enctype="multipart/form-data">
             <hr>
-            <label for="file">Upload File:</label>
+            <label for="file">
+              <img src="insert_image_icon.png" alt="Upload Image" class="insert_image_icon">
+            </label>
             <input type="file" id="file" name="file" accept="image/*, video/*" required>
             <input type="submit" value="Upload File">
         </form>
