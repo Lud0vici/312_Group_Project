@@ -18,22 +18,34 @@
     </form>
   </div>
 
-  <div class="create-post-button">
-      <button id="createPostBtn">Create a Post</button>
-  </div>
+  <div class="contents">
 
-  <div class="popup" id="popup">
-      <textarea id="postContent" rows="4" cols="50" placeholder="Type your post here"></textarea><br>
-      <button id="submitPostBtn">Submit</button>
-      <button id="cancelPostBtn">Cancel</button>
-  </div>
+    <div class="chat">
 
-  <div id="postsContainer">
-      <h2>The Feed</h2>
-      <br>
-      <!-- Posts will be dynamically added here -->
-      <button id="submitPostBtn" onclick="Submit()">Send</button>
-  </div>
+
+        <div id="chat-messages">
+        </div>
+
+
+        <div class="chat-form">
+            <hr>
+            <label>
+                Chat:
+                <input id="chat-text-box" type="text">
+            </label>
+
+<!--            <input type="hidden" id="xsrf-token" value="{{xsrf-token}}">-->
+
+            <button id="chat-button" onclick="sendChat()">Send</button>
+        </div>
+
+<!--        <form class="image-uploads" action="/upload" method="post" enctype="multipart/form-data">-->
+<!--            <hr>-->
+<!--            <label for="file">Upload File:</label>-->
+<!--            <input type="file" id="file" name="file" accept="image/*, video/*" required>-->
+<!--            <input type="submit" value="Upload File">-->
+<!--        </form>-->
+
 </body>
 </html>
 

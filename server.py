@@ -1,5 +1,7 @@
 import secrets
 import socketserver
+import uuid
+
 from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, session
 from util import database_handler
 from util import auth
@@ -31,6 +33,13 @@ def serve_javascript():
     response = send_from_directory("public", "functions.js")
     add_no_sniff(response)
     return response
+
+@app.route("/homepage_functions.js")
+def serve_homepage_js():
+    response = send_from_directory("public", "homepage_functions.js")
+    add_no_sniff(response)
+    return response
+
 
 @app.route("/login-registration.css")
 def serve_css():
@@ -180,6 +189,7 @@ def create_chat_message():
         response.status_code = 404
         return response
     message_content = request.form.get("message")
+
     if not message_content: 
         response = make_response("Message is empty") 
         add_no_sniff(response)
@@ -187,12 +197,17 @@ def create_chat_message():
         return response 
     database_handler.insert_chat_message(username, message_content)
 
+    response = make_response(message_content)
+    # response.status_code = 200
+    return response
+
+
 @app.route("/chat-messages", methods=["GET"])
 def get_chat_messages():
     chat_messages = database_handler.chat_collection.find({})
-    chat_history = [] 
+    chat_history = []
     for message in chat_messages:
-        chat_entry = {"message": message["message"],"username": message["username"] }
+        chat_entry = {"message": message["message"], "username": message["username"]}
         chat_history.append(chat_entry)
     chat_history_json = json.dumps(chat_history)
     response = make_response(chat_history_json)
@@ -200,7 +215,6 @@ def get_chat_messages():
     return response 
 
 
-    
 
 
 
