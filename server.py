@@ -2,19 +2,22 @@ import secrets
 import socketserver
 import uuid
 
-from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, session
+from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, \
+    session
 from util import database_handler
 from util import auth
 from util.database_handler import user_collection
 import hashlib
 from datetime import datetime, timedelta
-import json 
+import json
 
 app = Flask(__name__, template_folder="src")
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
+
 def add_no_sniff(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
+
 
 @app.route("/")
 def serve_login_page():
@@ -22,17 +25,20 @@ def serve_login_page():
     add_no_sniff(response)
     return response
 
+
 @app.route("/RegistrationPage.html")
 def serve_registration_page():
     response = send_from_directory("src", "RegistrationPage.html")
     add_no_sniff(response)
     return response
 
+
 @app.route("/functions.js")
 def serve_javascript():
     response = send_from_directory("public", "functions.js")
     add_no_sniff(response)
     return response
+
 
 @app.route("/homepage_functions.js")
 def serve_homepage_js():
@@ -47,13 +53,15 @@ def serve_css():
     add_no_sniff(response)
     return response
 
+
 @app.route("/rocket_ball.png")
 def serve_rocket_ball():
     response = send_from_directory("public", "image/rocket_ball.png")
     add_no_sniff(response)
     return response
 
-# edit function so that it calls on insertUser to put into database 
+
+# edit function so that it calls on insertUser to put into database
 @app.route("/register", methods=['POST'])
 def serve_registration():
     user_credentials = auth.extract_credentials(request)
@@ -65,7 +73,7 @@ def serve_registration():
     password = user_credentials[4]
     confirmedPassword = user_credentials[5]
     validPassword = auth.validate_password(password)
-    user_data = user_collection.find_one({"username": username})   #error
+    user_data = user_collection.find_one({"username": username})  # error
     user_email = user_collection.find_one({"email": email})
     if user_data is not None:
         response = make_response("Username already taken!")
@@ -98,6 +106,7 @@ def serve_registration():
         print(database_handler.user_collection.find_one({"username": username})["username"])
         return redirect(url_for("serve_login_page"))
 
+
 @app.route("/login", methods=["POST"])
 def serve_login():
     user_credentials = auth.extract_credentials(request)
@@ -114,15 +123,16 @@ def serve_login():
         salt = user_data["salt"]
         salted_password = password + salt
         curr_user_password = hashlib.sha256(salted_password.encode()).hexdigest()
-        if curr_user_password == user_data["password"]:     #if password matches the one found in the user_collection db
+        if curr_user_password == user_data["password"]:  # if password matches the one found in the user_collection db
             session["username"] = username
             token = secrets.token_urlsafe(32)
             hashed_token = hashlib.sha256(token.encode()).hexdigest()
             database_handler.user_collection.update_one({"username": username}, {"$set": {"auth_token": hashed_token}})
-            response = redirect(url_for('serve_homepage'))      #make a response with an empty body
+            response = redirect(url_for('serve_homepage'))  # make a response with an empty body
             expire_date = datetime.now()
             expire_date = expire_date + timedelta(minutes=60)
-            response.set_cookie("authentication-token", token, httponly=True, expires=expire_date, max_age=3600)     #set auth-token cookie
+            response.set_cookie("authentication-token", token, httponly=True, expires=expire_date,
+                                max_age=3600)  # set auth-token cookie
             session['username'] = username
             session.permanent = True
             app.permanent_session_lifetime = timedelta(minutes=60)
@@ -133,6 +143,7 @@ def serve_login():
             add_no_sniff(response)
             response.status_code = 404
             return response
+
 
 @app.route("/homepage")
 def serve_homepage():
@@ -149,8 +160,9 @@ def serve_homepage():
     hashed_token = hashlib.sha256(auth_token.encode()).hexdigest()
     user_data = user_collection.find_one({"username": username, "auth_token": hashed_token})
 
-    if not user_data: # Auth token stored in database doesn't match with auth token stored on webpage
-        response = make_response("Authentication token is incorrect. Please re-enter the correct authentication token and refresh the page.")
+    if not user_data:  # Auth token stored in database doesn't match with auth token stored on webpage
+        response = make_response(
+            "Authentication token is incorrect. Please re-enter the correct authentication token and refresh the page.")
         add_no_sniff(response)
         response.status_code = 404
         return response
@@ -162,8 +174,9 @@ def serve_homepage():
     add_no_sniff(response)
     return response
 
+
 @app.route("/logout", methods=["POST"])
-def serve_logout():     #serve logout button when we have the user on our actual page, not login or registration
+def serve_logout():  # serve logout button when we have the user on our actual page, not login or registration
     auth_token = request.cookies.get("authentication-token", None)
     response = redirect(url_for('serve_login_page'))
     add_no_sniff(response)
@@ -171,11 +184,51 @@ def serve_logout():     #serve logout button when we have the user on our actual
         response.delete_cookie('authentication-token')
         hashed_token = hashlib.sha256(auth_token.encode()).hexdigest()
         user_data = user_collection.find_one({"auth_token": hashed_token})
-        username = user_data["username"]    #why giving None?
+        username = user_data["username"]  # why giving None?
         user_collection.update_one({"username": username}, {"$set": {"auth_token": ""}})
         session.clear()
         response.delete_cookie("session")
     return response
+
+
+def full_char_decoder(message):
+    message = str(message)
+
+    index = 0
+    hex_char = ""
+    decoded_msg = ""
+
+    while index < len(message):
+        char = message[index]
+        if char == "%":
+            hex_char += char + message[index + 1] + message[index + 2]
+            hex_char = hex_char.upper()
+            decoded_char = self.reserved_char_decode(hex_char)
+            decoded_msg += decoded_char
+            index += 3
+        else:
+            decoded_msg += message[index]
+            index += 1
+    return decoded_msg
+
+
+def escape_HTML(message):
+    char_dict = {}
+    char_dict["&"] = "&amp;"
+    char_dict["<"] = "&lt;"
+    char_dict[">"] = "&gt;"
+    char_dict['"'] = "&quot"
+    char_dict["'"] = "&#39"
+
+    new_safe_message = ""
+
+    for char in message:
+        if char in char_dict:
+            new_safe_message += char_dict[char]
+        else:
+            new_safe_message += char
+
+    return new_safe_message
 
 @app.route("/chat-messages", methods=["POST"])
 def create_chat_message():
@@ -188,13 +241,20 @@ def create_chat_message():
         add_no_sniff(response)
         response.status_code = 404
         return response
-    message_content = request.form.get("message")
+    # message_content = request.form.get("message")
+    data = json.loads(request.data)
 
-    if not message_content: 
-        response = make_response("Message is empty") 
+    # char decode
+    # escape html
+
+    message_content = full_char_decoder(data["message"])
+    message_content = escape_HTML(message_content)
+
+    if not message_content:
+        response = make_response("Message is empty")
         add_no_sniff(response)
         response.status_code = 404
-        return response 
+        return response
     database_handler.insert_chat_message(username, message_content)
 
     response = make_response(message_content)
@@ -206,19 +266,16 @@ def create_chat_message():
 def get_chat_messages():
     chat_messages = database_handler.chat_collection.find({})
     chat_history = []
-    for message in chat_messages:
-        message = message["message"]
-        username = message["username"]
-        msg_id = message["id"]
+    for data in chat_messages:
+        message = data["message"]
+        username = data["username"]
+        msg_id = data["id"]
         chat_entry = {"message": message, "username": username, "id": msg_id}
         chat_history.append(chat_entry)
     chat_history_json = json.dumps(chat_history)
     response = make_response(chat_history_json)
     response.headers['Content-Type'] = 'application/json'
-    return response 
-
-
-
+    return response
 
 
 if __name__ == "__main__":

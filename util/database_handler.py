@@ -34,3 +34,4 @@ def salt_and_hash_password(password):
 def insert_chat_message(username, message_content): 
     message_id = str(uuid.uuid4())
     chat_collection.insert_one({"username": username, "message": message_content, "id": message_id})
+    return
