@@ -1,0 +1,15 @@
+.title {
+    height: 5%;
+}
+
+.contents {
+    display: flex;
+    justify-content: space-around;
+    height: 78%
+}
+
+.chat {
+    width: 70%;
+    background-color: #ff5e5e;
+    padding: 20px;
+}

@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/public/homepageStyle.css"/>
   <script src="/homepage_functions.js"></script>
   <title>Home Page</title>
 
 </head>
+
 <body>
-  <h1>Welcome to the Home Page</h1>
-  <h1>{{user}}</h1>
-  <br>
+  <div class="title"></div>
+    <h1>Welcome to the Home Page</h1>
+    <h1>{{user}}</h1>
+    <br>
+  </div>
   
   <div class="navbar">
     <form id="logout-form" action="/logout" method="post">
@@ -18,35 +23,39 @@
     </form>
   </div>
 
-<div class="chat">
+  <div class="contents">
+  <div class="chat">
 
 
-        <div id="chat-messages">
-        </div>
+          <div id="chat-messages">
+          </div>
 
 
-        <div class="chat-form">
-            <hr>
-            <label>
-                Chat:
-                <input id="chat-text-box" type="text">
-            </label>
+          <div class="chat-form">
+              <hr>
+              <label>
+                  Chat:
+                  <input id="chat-text-box" type="text">
+              </label>
 
-            <input type="hidden" id="xsrf-token" value="{{xsrf-token}}">
+              <input type="hidden" id="xsrf-token" value="{{xsrf-token}}">
 
-            <button id="chat-button" onclick="sendChat()">Send</button>
-        </div>
+              <button id="chat-button" onclick="sendChat()">Send</button>
+          </div>
 
-<!--        <form class="image-uploads" action="/upload" method="post" enctype="multipart/form-data">-->
-<!--            <hr>-->
-<!--            <label for="file">Upload File:</label>-->
-<!--            <input type="file" id="file" name="file" accept="image/*, video/*" required>-->
-<!--            <input type="submit" value="Upload File">-->
-<!--        </form>-->
+  <!--        <form class="image-uploads" action="/upload" method="post" enctype="multipart/form-data">-->
+  <!--            <hr>-->
+  <!--            <label for="file">Upload File:</label>-->
+  <!--            <input type="file" id="file" name="file" accept="image/*, video/*" required>-->
+  <!--            <input type="submit" value="Upload File">-->
+  <!--        </form>-->
 
 
 
-    </div>
+      </div>
+  </div>
+  
 </body>
+
 </html>
 
