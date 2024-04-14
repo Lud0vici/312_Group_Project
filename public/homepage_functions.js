@@ -97,7 +97,7 @@ function updateChat() {
     request.send();
 }
 
-function Welcome() {
+function welcome() {
     document.addEventListener("keypress", function (event) {
         if (event.code === "Enter") {
             sendChat();

@@ -266,10 +266,10 @@ def create_chat_message():
 def get_chat_messages():
     chat_messages = database_handler.chat_collection.find({})
     chat_history = []
-    for message in chat_messages:
-        message = message["message"]
-        username = message["username"]
-        msg_id = message["id"]
+    for data in chat_messages:
+        message = data["message"]
+        username = data["username"]
+        msg_id = data["id"]
         chat_entry = {"message": message, "username": username, "id": msg_id}
         chat_history.append(chat_entry)
     chat_history_json = json.dumps(chat_history)
