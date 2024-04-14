@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 import hashlib
 import secrets
+import uuid 
 
 mongo_client = MongoClient("TeamRocketMongo")
 db = mongo_client["TeamRocketDB"] 
