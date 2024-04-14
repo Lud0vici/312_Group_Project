@@ -8,7 +8,6 @@ user_collection = db["users"]  # database collection containing all users
 chat_collection = db["chat"]   # database collection containing all chat messages
 
 #checks if user already exists and adds username + salt + hash into database 
-
 def insert_user(first_name, last_name, email, username, salt, hashedPassword):
     if user_collection.find_one({"username": username}): 
         raise Exception("Username already exists.")
