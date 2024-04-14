@@ -1,3 +1,5 @@
+import uuid
+
 from pymongo import MongoClient
 import hashlib
 import secrets
