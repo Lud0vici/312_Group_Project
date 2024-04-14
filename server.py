@@ -11,6 +11,7 @@ import hashlib
 from datetime import datetime, timedelta
 import json
 
+
 app = Flask(__name__, template_folder="src")
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
@@ -191,6 +192,48 @@ def serve_logout():  # serve logout button when we have the user on our actual p
     return response
 
 
+
+def reserved_char_decode(char):
+    char = char.upper()
+    if char == "%20":
+        return " "
+    elif char == "%3A":
+        return ":"
+    elif char == "%2F":
+        return "/"
+    elif char == "%3F":
+        return "?"
+    elif char == "%23":
+        return "#"
+    elif char == "%58":
+        return "["
+    elif char == "%5D":
+        return "]"
+    elif char == "%40":
+        return "@"
+    elif char == "%21":
+        return "!"
+    elif char == "%24":
+        return "$"
+    elif char == "%26":
+        return "&"
+    elif char == "%27":
+        return "'"
+    elif char == "%28":
+        return "("
+    elif char == "%29":
+        return ")"
+    elif char == "%2A":
+        return "*"
+    elif char == "%2B":
+        return "+"
+    elif char == "%2C":
+        return ","
+    elif char == "%3B":
+        return ";"
+    elif char == "%3D":
+        return "="
+
 def full_char_decoder(message):
     message = str(message)
 
@@ -203,7 +246,7 @@ def full_char_decoder(message):
         if char == "%":
             hex_char += char + message[index + 1] + message[index + 2]
             hex_char = hex_char.upper()
-            decoded_char = self.reserved_char_decode(hex_char)
+            decoded_char = reserved_char_decode(hex_char)
             decoded_msg += decoded_char
             index += 3
         else:
@@ -276,6 +319,39 @@ def get_chat_messages():
     response = make_response(chat_history_json)
     response.headers['Content-Type'] = 'application/json'
     return response
+
+@app.route("/homepageStyle.css")
+def serve_homepage_css():
+    response = send_from_directory("public", "homepageStyle.css")
+    add_no_sniff(response)
+    return response
+
+
+def save_image(filepath, data):
+    with open(filepath, 'wb') as f:
+        f.write(data)
+
+@app.route("/upload", methods=["POST"])
+def file_uploads():
+    username = session.get("username")
+
+    file = request.files['file']
+    data = file.read()
+
+    message = ""
+
+    if data.startswith(b"\xff\xd8") or data.startswith(b"\xFF\xD8"):    # jpeg
+        filename = str(uuid.uuid4()) + ".jpg"
+        directory_path = "public/image/"
+        file_path = directory_path + filename
+        save_image(file_path, data)
+        message = f'<img src="http://localhost:8080/public/uploads/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/>'
+
+    message_id = str(uuid.uuid4())
+    database_handler.chat_collection.insert_one({"username": username, "message": message, "id": message_id})
+    response = b"HTTP/1.1 302 Found redirect\r\nX-Content-Type-Options: nosniff\r\nContent-Length: 0\r\nLocation: /"
+    return response
+
 
 
 if __name__ == "__main__":
