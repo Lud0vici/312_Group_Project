@@ -1,3 +1,5 @@
+let ws = false;
+
 function toggleLike(index) {
     if (posts[index].liked) {
         posts[index].likes--;
@@ -72,8 +74,8 @@ function sendChat() {
         }
         const messageJSON = {"message": message};
         request.open("POST", "/chat-messages");
-        const xsrfToken = document.getElementById("xsrf_token").value;
-        request.setRequestHeader("X-XSRF-Token", xsrfToken);
+//        const xsrfToken = document.getElementById("xsrf_token").value;
+//        request.setRequestHeader("X-XSRF-Token", xsrfToken);
         request.send(JSON.stringify(messageJSON));
     }
     chatTextBox.focus();
@@ -93,5 +95,24 @@ function updateChat() {
     }
     request.open("GET", "/chat-messages");
     request.send();
+}
+
+function Welcome() {
+    document.addEventListener("keypress", function (event) {
+        if (event.code === "Enter") {
+            sendChat();
+        }
+    });
+
+
+    updateChat();
+
+    if (ws) {
+        initWS();
+    } else {
+//        const videoElem = document.getElementsByClassName('video-chat')[0];
+//        videoElem.parentElement.removeChild(videoElem);
+        setInterval(updateChat, 5000);
+    }
 }
 
