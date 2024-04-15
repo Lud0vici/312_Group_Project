@@ -1,5 +1,6 @@
 function welcome(){
     document.getElementById("intro").innerHTML += "<br>Prepare for trouble! And make it double! 😆";
+    document.getElementById('confirm-password').addEventListener('keyup', checkPassword);
 }
 
 // validate the password on the frontend for a visual pw check
@@ -39,7 +40,7 @@ function checkPassword() {
     }
 
     // Check if passwords match
-    if (password === confirm_password && confirm_password !== '') {
+    if (password == confirm_password && confirm_password != '') {
         document.getElementById('match').className = 'completed';
     }
 }
