@@ -11,7 +11,6 @@ h1 {
     background-color: #9d00ff;
     padding: 1%;
     margin: 0;
-    outline: 2px solid #00ff1e
 }
 
 .title {
@@ -20,13 +19,11 @@ h1 {
   justify-content: center;
   align-items: center; /* Vertically center the content */
   text-align: center; /* Horizontally center the text */
-  outline: 2px solid black;
 }
 
 .contents {
     display: flex;
     justify-content: space-around;
-  outline: 2px solid #707aff;
 }
 
 #chat-messages {
@@ -39,7 +36,6 @@ h1 {
     /*height: 10%;*/
     width: 70%;
     padding: 20px;
-    outline: 2px solid #0011ff;
     
 }
 
@@ -63,6 +59,6 @@ h1 {
 }
 
 .insert_image_icon {
-    height: 10%;
-    width: 10%;
+    height: 5%;
+    width: 5%;
 }

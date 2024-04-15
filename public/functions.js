@@ -1,5 +1,5 @@
 function welcome(){
-    document.getElementById("intro").innerHTML += "<br>Prepare for trouble! And make it double! 😆";
+    document.getElementById("intro").innerHTML += "<br>Rating Restaurants at the Speed of Light! 😆";
     document.getElementById('confirm-password').addEventListener('keyup', checkPassword);
 }
 
