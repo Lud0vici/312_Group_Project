@@ -74,8 +74,6 @@ function sendChat() {
         }
         const messageJSON = {"message": message};
         request.open("POST", "/chat-messages");
-//        const xsrfToken = document.getElementById("xsrf_token").value;
-//        request.setRequestHeader("X-XSRF-Token", xsrfToken);
         request.send(JSON.stringify(messageJSON));
     }
     chatTextBox.focus();
@@ -98,9 +96,21 @@ function updateChat() {
 }
 
 function welcome() {
-    document.addEventListener("keypress", function (event) {
-        if (event.code === "Enter") {
-            sendChat();
+//    document.addEventListener("keypress", function (event) {
+//        if (event.code === "Enter") {
+//            sendChat();
+//        }
+//    });
+    const textarea = document.getElementById('postbox'); // Replace 'myTextarea' with the actual ID of your textarea element
+
+    textarea.addEventListener("keypress", function (event) {
+        // Check if the Enter key is pressed
+        if (event.key === "Enter") {
+            // Prevent the default behavior of the Enter key (submitting the form)
+            event.preventDefault();
+
+            // Append a newline character to the textarea's value
+            this.value += '\n';
         }
     });
 

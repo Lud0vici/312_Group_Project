@@ -296,11 +296,13 @@ def create_chat_message():
     message_content = full_char_decoder(data["message"])
     message_content = escape_HTML(message_content)
 
+
     if not message_content:
         response = make_response("Message is empty")
         add_no_sniff(response)
         response.status_code = 404
         return response
+
     database_handler.insert_chat_message(username, message_content)
 
     response = make_response(message_content)
@@ -357,14 +359,14 @@ def file_uploads():
             directory_path = "public/image/"
             file_path = directory_path + filename  # path is correct
             save_image(file_path, data)
-            message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/png" alt="{filename}" class="my_image"/>'
+            message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/png" alt="{filename}" class="my_image"/> <br> {post_content}'
 
         if data.startswith(b"\x47\x49\x46\x38\x37\x61") or data.startswith(b"\x47\x49\x46\x38\x39\x61"):
             filename = str(uuid.uuid4()) + ".gif"  # filename could easily use uuid for
-            directory_path = "public/uploads/"
+            directory_path = "public/image/"
             file_path = directory_path + filename  # path is correct
             save_image(file_path, data)
-            message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/gif" alt="{filename}" class="my_image"/>'
+            message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/gif" alt="{filename}" class="my_image"/> <br> {post_content}'
 
         mp4_file_signature = data[:8]
         if mp4_file_signature.endswith(b"ftyp"):
@@ -373,7 +375,7 @@ def file_uploads():
             directory_path = "public/image/"
             file_path = directory_path + filename
             save_image(file_path, data)
-            message = f'<video width="400" controls autoplay muted><source src="http://localhost:8080/public/image/{filename}" type="video/mp4"> alt="{filename}</video>'
+            message = f'<video width="400" controls autoplay muted><source src="http://localhost:8080/public/image/{filename}" type="video/mp4"> alt="{filename}</video> <br> {post_content}'
 
         # add mp3 logic here #
     else:
