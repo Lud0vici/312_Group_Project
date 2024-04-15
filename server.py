@@ -342,38 +342,42 @@ def file_uploads():
     data = file.read()
 
     message = ""
+    post_content = request.form.get('post_content', '')
 
-    if data.startswith(b"\xff\xd8") or data.startswith(b"\xFF\xD8"):    # jpeg
-        filename = str(uuid.uuid4()) + ".jpg"
-        directory_path = "public/image/"
-        file_path = directory_path + filename
-        save_image(file_path, data)
-        message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/>'
+    if file:
+        if data.startswith(b"\xff\xd8") or data.startswith(b"\xFF\xD8"):    # jpeg
+            filename = str(uuid.uuid4()) + ".jpg"
+            directory_path = "public/image/"
+            file_path = directory_path + filename
+            save_image(file_path, data)
+            message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/> <br> {post_content}'
 
-    if data.startswith(b"\x89\x50\x4E\x47\x0D\x0A\x1A\x0A") or data.startswith(b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"):
-        filename = str(uuid.uuid4()) + ".png"  # filename could easily use uuid for
-        directory_path = "public/image/"
-        file_path = directory_path + filename  # path is correct
-        save_image(file_path, data)
-        message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/png" alt="{filename}" class="my_image"/>'
+        if data.startswith(b"\x89\x50\x4E\x47\x0D\x0A\x1A\x0A") or data.startswith(b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"):
+            filename = str(uuid.uuid4()) + ".png"  # filename could easily use uuid for
+            directory_path = "public/image/"
+            file_path = directory_path + filename  # path is correct
+            save_image(file_path, data)
+            message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/png" alt="{filename}" class="my_image"/>'
 
-    if data.startswith(b"\x47\x49\x46\x38\x37\x61") or data.startswith(b"\x47\x49\x46\x38\x39\x61"):
-        filename = str(uuid.uuid4()) + ".gif"  # filename could easily use uuid for
-        directory_path = "public/uploads/"
-        file_path = directory_path + filename  # path is correct
-        save_image(file_path, data)
-        message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/gif" alt="{filename}" class="my_image"/>'
+        if data.startswith(b"\x47\x49\x46\x38\x37\x61") or data.startswith(b"\x47\x49\x46\x38\x39\x61"):
+            filename = str(uuid.uuid4()) + ".gif"  # filename could easily use uuid for
+            directory_path = "public/uploads/"
+            file_path = directory_path + filename  # path is correct
+            save_image(file_path, data)
+            message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/gif" alt="{filename}" class="my_image"/>'
 
-    mp4_file_signature = data[:8]
-    if mp4_file_signature.endswith(b"ftyp"):
-        # elif file_type == "mp4":
-        filename = str(uuid.uuid4()) + ".mp4"
-        directory_path = "public/image/"
-        file_path = directory_path + filename
-        save_image(file_path, data)
-        message = f'<video width="400" controls autoplay muted><source src="http://localhost:8080/public/image/{filename}" type="video/mp4"> alt="{filename}</video>'
+        mp4_file_signature = data[:8]
+        if mp4_file_signature.endswith(b"ftyp"):
+            # elif file_type == "mp4":
+            filename = str(uuid.uuid4()) + ".mp4"
+            directory_path = "public/image/"
+            file_path = directory_path + filename
+            save_image(file_path, data)
+            message = f'<video width="400" controls autoplay muted><source src="http://localhost:8080/public/image/{filename}" type="video/mp4"> alt="{filename}</video>'
 
-    # add mp3 logic here #
+        # add mp3 logic here #
+    else:
+        message = post_content
 
     message_id = str(uuid.uuid4())
     database_handler.chat_collection.insert_one({"username": username, "message": message, "id": message_id})
