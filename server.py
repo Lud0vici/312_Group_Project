@@ -13,11 +13,9 @@ from datetime import datetime, timedelta
 import json
 from werkzeug.utils import secure_filename
 
-
-
 app = Flask(__name__, template_folder="src")
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 def add_no_sniff(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -377,7 +375,12 @@ def file_uploads():
             save_image(file_path, data)
             message = f'<video width="400" controls autoplay muted><source src="http://localhost:8080/public/image/{filename}" type="video/mp4"> alt="{filename}</video> <br> {post_content}'
 
-        # add mp3 logic here #
+        if data.startswith(b"\x49\x44\x33"):
+            filename = str(uuid.uuid4()) + ".mp3"
+            directory_path = "public/image/"
+            file_path = directory_path + filename
+            save_image(file_path, data)
+            message = f'<audio controls><source src="http://localhost:8080/public/image/{filename}" type="audio/mpeg"> alt="{filename}</audio> <br> {post_content}'
     else:
         message = post_content
 
@@ -389,7 +392,6 @@ def file_uploads():
 
 @app.route("/public/image/<filename>", methods=["GET"])
 def file_serve(filename):
-
     sanitized_filename = secure_filename(filename)
 
     file_path = os.path.join("./public/image/", sanitized_filename)
@@ -399,7 +401,6 @@ def file_serve(filename):
         add_no_sniff(response)
         response.status_code = 404
         return response
-
     else:
         response_content_type = "application/octet-stream"
 
@@ -411,6 +412,8 @@ def file_serve(filename):
             response_content_type = "image/gif"
         elif sanitized_filename.endswith("mp4"):
             response_content_type = "video/mpeg"
+        elif sanitized_filename.endswith("mp3"):
+            response_content_type = "audio/mpeg"
 
         return send_file(file_path, mimetype=response_content_type)
 
