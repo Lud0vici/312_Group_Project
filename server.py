@@ -3,8 +3,10 @@ import secrets
 import socketserver
 import uuid
 
+# import socketio as socketio
 from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, \
     session, send_file
+from flask_sock import Sock
 from util import database_handler
 from util import auth
 from util.database_handler import user_collection
@@ -13,7 +15,10 @@ from datetime import datetime, timedelta
 import json
 from werkzeug.utils import secure_filename
 
+
 app = Flask(__name__, template_folder="src")
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+sock = Sock(app)
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
@@ -423,6 +428,14 @@ def serve_image_icon_png():
     response = send_from_directory("public", "image/insert_image_icon.png")
     add_no_sniff(response)
     return response
+
+
+@sock.route('/websocket')
+def websocket(ws):
+    while True:
+        data = ws.receive()
+        ws.send(data)
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
