@@ -76,3 +76,8 @@ h1 {
     height: auto;
     width: 400px;
 }
+
+.input-file-icon img {
+    width: 10px;
+    height: 10px;
+}
