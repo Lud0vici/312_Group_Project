@@ -1,4 +1,26 @@
-let ws = false;
+const ws = true;
+let socket = null;
+
+
+
+function initWS() {
+    // Establish a WebSocket connection with the server
+    socket = new WebSocket('ws://' + window.location.host + '/websocket');
+
+    // Called whenever data is received from the server over the WebSocket connection
+    socket.onmessage = function (ws_message) {
+        const message = JSON.parse(ws_message.data);
+        const messageType = message.messageType
+        if(messageType === 'chatMessage'){
+            addMessageToChat(message);
+        }else{
+            // send message to WebRTC
+            processMessageAsWebRTC(message, messageType);
+        }
+    }
+}
+
+
 
 function toggleLike(index) {
     if (posts[index].liked) {

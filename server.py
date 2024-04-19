@@ -3,8 +3,10 @@ import secrets
 import socketserver
 import uuid
 
+# import socketio as socketio
 from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, \
     session, send_file
+from flask_sock import Sock
 from util import database_handler
 from util import auth
 from util.database_handler import user_collection
@@ -13,7 +15,10 @@ from datetime import datetime, timedelta
 import json
 from werkzeug.utils import secure_filename
 
+
 app = Flask(__name__, template_folder="src")
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+sock = Sock(app)
 
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
@@ -387,7 +392,10 @@ def file_uploads():
     message_id = str(uuid.uuid4())
     database_handler.chat_collection.insert_one({"username": username, "message": message, "id": message_id})
 
-    return redirect(url_for('serve_homepage'))
+    # return redirect(url_for('serve_homepage'))
+
+
+
 
 
 @app.route("/public/image/<filename>", methods=["GET"])
@@ -423,6 +431,33 @@ def serve_image_icon_png():
     response = send_from_directory("public", "image/insert_image_icon.png")
     add_no_sniff(response)
     return response
+
+
+@sock.route('/websocket')
+def websocket(ws):
+    while True:
+        data = ws.receive()
+        ws.send(data)
+    # while True:  # Keep the loop running until connection is closed
+    #     message = ws.receive()
+    #     if message is not None:  # Check if a message is received
+    #         # Handle WebSocket messages
+    #         ws.send(message)
+    #     else:
+    #         # No message received, exit the loop
+    #         break
+    #
+    #     # Handle file uploads
+    #     file = request.files.get('file')
+    #     if file:
+    #         # Process the uploaded file
+    #         filename = str(uuid.uuid4()) + '_' + file.filename
+    #         directory_path = "public/image/"
+    #         file_path = os.path.join(directory_path, filename)
+    #         file.save(file_path)
+    #         # Send confirmation message or handle as needed
+    #         ws.send(f'File uploaded: {filename}')
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
