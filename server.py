@@ -392,7 +392,7 @@ def file_uploads():
     message_id = str(uuid.uuid4())
     database_handler.chat_collection.insert_one({"username": username, "message": message, "id": message_id})
 
-    # return redirect(url_for('serve_homepage'))
+    return redirect(url_for('serve_homepage'))
 
 
 
