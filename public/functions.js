@@ -44,3 +44,23 @@ function checkPassword() {
         document.getElementById('match').className = 'completed';
     }
 }
+
+function uploadFile() {
+    var formData = new FormData($('#post-form')[0]);
+
+    $.ajax({
+        url: '/upload',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function(response) {
+            // Handle successful response
+            $("#message").text(response.message);
+        },
+        error: function(xhr, status, error) {
+            // Handle error response
+            console.error(xhr.responseText);
+        }
+    });
+}
