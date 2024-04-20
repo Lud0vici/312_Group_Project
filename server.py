@@ -345,13 +345,16 @@ def save_image(filepath, data):
 def file_uploads():
     username = session.get("username")
 
+
     file = request.files['file']
-    data = file.read()
+    # data = file.read()
+
 
     message = ""
     post_content = request.form.get('post_content', '')
 
     if file:
+        data = file.read()
         if data.startswith(b"\xff\xd8") or data.startswith(b"\xFF\xD8"):    # jpeg
             filename = str(uuid.uuid4()) + ".jpg"
             directory_path = "public/image/"
@@ -392,9 +395,14 @@ def file_uploads():
         message = post_content
 
     message_id = str(uuid.uuid4())
-    database_handler.chat_collection.insert_one({"username": username, "message": message, "id": message_id})
+    database_handler.chat_collection.insert_one({"messageType": "chatMessage", "username": username, "message": message, "id": message_id})
 
     return redirect(url_for('serve_homepage'))
+    # response = make_response(message)
+    # response.status_code = 200
+    # add_no_sniff(response)
+    # return response
+    # return jsonify({'message': 'File uploaded successfully'})
 
 
 
@@ -435,25 +443,67 @@ def serve_image_icon_png():
     return response
 
 
+# @sock.route('/websocket')
+# async def ws(websocket):
+#     connected_clients.append(websocket)  # Add the client to the set of connected clients
+#     print("WebSocket handshake completed")
+#     try:
+#         while True:
+#             data = await websocket.receive()  # Wait for a message from the client
+#             # Broadcast the received message to all connected clients
+#             for client in connected_clients:
+#                 if client != websocket:
+#                     await client.send(data)
+#     except Exception as e:
+#         print("WebSocket connection closed:", e)
+#         connected_clients.remove(websocket)
+
 @sock.route('/websocket')
 def websocket(ws):
     connected_clients.append(ws)  # Add the client to the set of connected clients
-    while True:
-        print("ws handshake completed")
-        data = ws.receive()
-        ws.send(data)
-    # try:
-#         while True:
-#             message = ws.receive()
-#             if message is not None:  # Check if a message is received
-#                 # Broadcast the message to all connected clients
-#                 for client in connected_clients:
-#                     client.send(message)
-#             else:
-#                 # No message received, exit the loop
-#                 break
-#     finally:
-#         connected_clients.remove(ws)
+    # while True:
+    #     print("ws handshake completed")
+    #     data = ws.receive()
+    #     ws.send(data)
+    username = session.get("username")
+    try:
+        while True:
+            message = ws.receive()
+            if message is not None:  # Check if a message is received
+                # Broadcast the message to all connected clients
+                # Message needs to be in format: {
+                #   'messageType': 'chatMessage',
+                #   'username': username_of_the_sender,
+                #   'message': html_escaped_message_submitted_by_user,
+                #   'id': id_of_the_message
+                # }
+                message = json.loads(message)
+                message_Type = message["messageType"]
+                if message_Type == "chatMessage":
+                    user_message = escape_HTML(message["message"])
+                # elif message_Type is "image + text":
+                #     user_message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/> <br> {post_content}'
+                #     pass
+                else:
+                    user_message = message["image"]
+
+                message_id = str(uuid.uuid4())
+                constructed_message = {
+                  "messageType": message["messageType"],
+                  "username": str(username),
+                  "message": user_message,
+                  "id": message_id
+                }
+
+                #how to serve images, and images+text???
+                database_handler.chat_collection.insert_one(
+                    {"messageType": message["messageType"], "username": username, "message": user_message, "id": message_id})
+
+                constructed_message = json.dumps(constructed_message)
+                for client in connected_clients:
+                    client.send(constructed_message)
+    finally:
+        connected_clients.remove(ws)
     # while True:  # Keep the loop running until connection is closed
     #     message = ws.receive()
     #     if message is not None:  # Check if a message is received
