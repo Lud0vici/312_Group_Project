@@ -1,3 +1,4 @@
+import base64
 import os
 import secrets
 import socketserver
@@ -460,6 +461,16 @@ def serve_image_icon_png():
 #         print("WebSocket connection closed:", e)
 #         connected_clients.remove(websocket)
 
+
+UPLOAD_FOLDER = '/public/image'
+
+def save_image_to_docker(image_bytes, filename):
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, 'wb') as f:
+        f.write(image_bytes)
+    return filepath
+
 @sock.route('/websocket')
 def websocket(ws):
     connected_clients.append(ws)  # Add the client to the set of connected clients
@@ -472,22 +483,19 @@ def websocket(ws):
         while True:
             message = ws.receive()
             if message is not None:  # Check if a message is received
-                # Broadcast the message to all connected clients
-                # Message needs to be in format: {
-                #   'messageType': 'chatMessage',
-                #   'username': username_of_the_sender,
-                #   'message': html_escaped_message_submitted_by_user,
-                #   'id': id_of_the_message
-                # }
-                message = json.loads(message)
-                message_Type = message["messageType"]
+                data = json.loads(message)
+                message_Type = data["messageType"]
+
                 if message_Type == "chatMessage":
                     user_message = escape_HTML(message["message"])
-                # elif message_Type is "image + text":
-                #     user_message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/> <br> {post_content}'
-                #     pass
+                elif message_Type == "image":
+                    user_message = ""
+
+                elif message_Type == "imageText":
+                    user_message = ""
                 else:
-                    user_message = message["image"]
+                    # Unsupported message type
+                    continue
 
                 message_id = str(uuid.uuid4())
                 constructed_message = {
