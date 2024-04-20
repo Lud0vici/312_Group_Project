@@ -3,3 +3,4 @@ Werkzeug==2.2.2
 
 pymongo~=4.6.1
 flask-sock==0.7.0
+Flask-SocketIO==5.3.6

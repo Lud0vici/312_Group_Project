@@ -14,13 +14,15 @@ import hashlib
 from datetime import datetime, timedelta
 import json
 from werkzeug.utils import secure_filename
+# from flask_socketio import SocketIO, emit
 
+connected_clients = []
 
 app = Flask(__name__, template_folder="src")
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 sock = Sock(app)
+#socketio = SocketIO(app, cors_allowed_origins="*")
 
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 def add_no_sniff(response):
     response.headers["X-Content-Type-Options"] = "nosniff"
@@ -392,7 +394,7 @@ def file_uploads():
     message_id = str(uuid.uuid4())
     database_handler.chat_collection.insert_one({"username": username, "message": message, "id": message_id})
 
-    # return redirect(url_for('serve_homepage'))
+    return redirect(url_for('serve_homepage'))
 
 
 
@@ -435,9 +437,23 @@ def serve_image_icon_png():
 
 @sock.route('/websocket')
 def websocket(ws):
+    connected_clients.append(ws)  # Add the client to the set of connected clients
     while True:
+        print("ws handshake completed")
         data = ws.receive()
         ws.send(data)
+    # try:
+#         while True:
+#             message = ws.receive()
+#             if message is not None:  # Check if a message is received
+#                 # Broadcast the message to all connected clients
+#                 for client in connected_clients:
+#                     client.send(message)
+#             else:
+#                 # No message received, exit the loop
+#                 break
+#     finally:
+#         connected_clients.remove(ws)
     # while True:  # Keep the loop running until connection is closed
     #     message = ws.receive()
     #     if message is not None:  # Check if a message is received
@@ -459,5 +475,23 @@ def websocket(ws):
     #         ws.send(f'File uploaded: {filename}')
 
 
+# WebSocket route
+# @socketio.on('connect', namespace='/websocket')
+# def handle_connect():
+#     connected_clients.add(session.get("username"))  # Add client to connected clients set
+#
+# @socketio.on('disconnect', namespace='/websocket')
+# def handle_disconnect():
+#     connected_clients.remove(session.get("username"))  # Remove client from connected clients set upon disconnection
+#
+# # Other WebSocket event handlers as needed
+# # For example:
+# @socketio.on('message', namespace='/websocket')
+# def handle_message(message):
+#     # Handle WebSocket message
+#     # You can broadcast messages to other clients here if needed
+#     pass
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
+    # socketio.run(app, host='0.0.0.0', port=8080, debug=True)
