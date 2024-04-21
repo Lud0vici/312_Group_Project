@@ -457,6 +457,16 @@ def serve_image_icon_png():
 #         f.write(base64.b64decode(image_bytes))
 #     return filepath
 
+@sock.route('/public/image/<filename>')
+def serve_image(filename):
+    return send_from_directory('public/image', filename)
+    # response_content_type = "image/jpeg"
+    # sanitized_filename = secure_filename(filename)
+    #
+    # file_path = os.path.join("./public/image/", sanitized_filename)
+    # return send_file(file_path, mimetype=response_content_type)
+
+
 @sock.route('/websocket')
 def websocket(ws):
     connected_clients.append(ws)  # Add the client to the set of connected clients
@@ -472,7 +482,7 @@ def websocket(ws):
 
                 # print(data)
                 message_type = data["messageType"]
-
+                user_message = ""
                 if message_type == "chatMessage":
                     user_message = escape_HTML(data["message"])
                 elif message_type == "image":
@@ -480,14 +490,16 @@ def websocket(ws):
                     image_data = data["image"]
                     byte_data = base64.b64decode(image_data)
 
-                    # should be in bytes already
-
                     if image_data:
                         filename = str(uuid.uuid4()) + ".jpg"
                         directory_path = "public/image/"
                         file_path = directory_path + filename
                         save_image(file_path, byte_data)
                         user_message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/>'
+                        # with open(file_path, 'rb') as file:
+                        #     encoded_image_data = base64.b64encode(file.read()).decode('utf-8')
+
+                        # user_message = encoded_image_data
 
                 elif message_type == "imageText":
                     message_data = data["message"]
@@ -501,9 +513,6 @@ def websocket(ws):
                         save_image(file_path, byte_data)
                         user_message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/> <br> {message_data}'
 
-                else:
-                    # Unsupported message type
-                    pass
 
                 message_id = str(uuid.uuid4())
                 constructed_message = {
