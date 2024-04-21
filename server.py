@@ -14,6 +14,7 @@ from util.database_handler import user_collection
 import hashlib
 from datetime import datetime, timedelta
 import json
+import base64
 from werkzeug.utils import secure_filename
 # from flask_socketio import SocketIO, emit
 
@@ -462,13 +463,21 @@ def serve_image_icon_png():
 #         connected_clients.remove(websocket)
 
 
-UPLOAD_FOLDER = '/public/image'
+UPLOAD_FOLDER = '/public/image/'
 
+# def save_image_to_docker(image_bytes, filename):
+#     filepath = os.path.join(UPLOAD_FOLDER, filename)
+#     os.makedirs(os.path.dirname(filepath), exist_ok=True)
+#     with open(filepath, 'wb') as f:
+#         f.write(image_bytes)
+#     return filepath
+
+# Define the save_image_to_docker function
 def save_image_to_docker(image_bytes, filename):
     filepath = os.path.join(UPLOAD_FOLDER, filename)
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, 'wb') as f:
-        f.write(image_bytes)
+        f.write(base64.b64decode(image_bytes))
     return filepath
 
 @sock.route('/websocket')
@@ -484,30 +493,53 @@ def websocket(ws):
             message = ws.receive()
             if message is not None:  # Check if a message is received
                 data = json.loads(message)
-                message_Type = data["messageType"]
+                print("Received data:")
+                for key, value in data.items():
+                    print(f"{key}: {value}")  # Print each key-value pair
+                message_type = data["messageType"]
 
-                if message_Type == "chatMessage":
-                    user_message = escape_HTML(message["message"])
-                elif message_Type == "image":
-                    user_message = ""
-
-                elif message_Type == "imageText":
-                    user_message = ""
+                if message_type == "chatMessage":
+                    user_message = escape_HTML(data["message"])
+                elif message_type == "image":
+                    # Handle image message
+                    image_data = data.get("image", "")
+                    filename = str(uuid.uuid4())
+                    if image_data:
+                        filepath = save_image_to_docker(image_data.split(",")[1], filename)
+                        user_message = f"<img src='/public/image/{filename}' alt='Image'/>"
+                    else:
+                        # Error handling if image data or filename is missing
+                        continue
+                # elif message_type == "imageText":
+                #     # Handle image with text message
+                #     image_data = data.get("image", "")
+                #     filename = data.get("filename", "")
+                #     text = data.get("text", "")
+                #     if image_data and filename:
+                #         filepath = save_image_to_docker(image_data.split(",")[1], filename)
+                #         user_message = f"<img src='/public/images/{filename}' alt='Image'/> {text}"
+                #     else:
+                #         # Error handling if image data, filename, or text is missing
+                #         continue
                 else:
                     # Unsupported message type
                     continue
 
                 message_id = str(uuid.uuid4())
                 constructed_message = {
-                  "messageType": message["messageType"],
-                  "username": str(username),
-                  "message": user_message,
-                  "id": message_id
+                    "messageType": data["messageType"],
+                    "username": str(username),
+                    "message": user_message,
+                    "id": message_id
                 }
 
-                #how to serve images, and images+text???
-                database_handler.chat_collection.insert_one(
-                    {"messageType": message["messageType"], "username": username, "message": user_message, "id": message_id})
+                # how to serve images, and images+text???
+                database_handler.chat_collection.insert_one({
+                    "messageType": data["messageType"],
+                    "username": username,
+                    "message": user_message,
+                    "id": message_id
+                })
 
                 constructed_message = json.dumps(constructed_message)
                 for client in connected_clients:
