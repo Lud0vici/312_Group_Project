@@ -87,6 +87,16 @@ function addMessageToChat(messageJSON) {
     chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
 }
 
+function arrayBufferToBinaryString(buffer) {
+    const bytes = new Uint8Array(buffer);
+    let binaryString = 'b"';
+    for (let i = 0; i < bytes.length; i++) {
+        binaryString += '\\x' + bytes[i].toString(16).padStart(2, '0');
+    }
+    binaryString += '"';
+    return binaryString;
+}
+
 function sendChat() {
     const chatTextBox = document.getElementById("postbox");
     const fileInput = document.getElementById('file');
@@ -135,6 +145,7 @@ function sendChat() {
             // Handle the case where neither a file nor a message is provided
             console.log("Please select a file or enter a message.");
         }
+
     } else {
         // Using AJAX
         console.log("ajax")

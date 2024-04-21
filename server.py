@@ -447,83 +447,63 @@ def serve_image_icon_png():
     return response
 
 
-# @sock.route('/websocket')
-# async def ws(websocket):
-#     connected_clients.append(websocket)  # Add the client to the set of connected clients
-#     print("WebSocket handshake completed")
-#     try:
-#         while True:
-#             data = await websocket.receive()  # Wait for a message from the client
-#             # Broadcast the received message to all connected clients
-#             for client in connected_clients:
-#                 if client != websocket:
-#                     await client.send(data)
-#     except Exception as e:
-#         print("WebSocket connection closed:", e)
-#         connected_clients.remove(websocket)
-
-
-UPLOAD_FOLDER = '/public/image/'
-
+#
+# UPLOAD_FOLDER = '/public/image/'
+#
 # def save_image_to_docker(image_bytes, filename):
 #     filepath = os.path.join(UPLOAD_FOLDER, filename)
 #     os.makedirs(os.path.dirname(filepath), exist_ok=True)
 #     with open(filepath, 'wb') as f:
-#         f.write(image_bytes)
+#         f.write(base64.b64decode(image_bytes))
 #     return filepath
-
-# Define the save_image_to_docker function
-def save_image_to_docker(image_bytes, filename):
-    filepath = os.path.join(UPLOAD_FOLDER, filename)
-    os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    with open(filepath, 'wb') as f:
-        f.write(base64.b64decode(image_bytes))
-    return filepath
 
 @sock.route('/websocket')
 def websocket(ws):
     connected_clients.append(ws)  # Add the client to the set of connected clients
-    # while True:
-    #     print("ws handshake completed")
-    #     data = ws.receive()
-    #     ws.send(data)
+
     username = session.get("username")
     try:
         while True:
             message = ws.receive()
             if message is not None:  # Check if a message is received
                 data = json.loads(message)
-                print("Received data:")
-                for key, value in data.items():
-                    print(f"{key}: {value}")  # Print each key-value pair
+                # for key, value in data.items():
+                #     print(f"{key}: {value}")  # Print each key-value pair
+
+                # print(data)
                 message_type = data["messageType"]
 
                 if message_type == "chatMessage":
                     user_message = escape_HTML(data["message"])
                 elif message_type == "image":
                     # Handle image message
-                    image_data = data.get("image", "")
-                    filename = str(uuid.uuid4())
+                    image_data = data["image"]
+                    byte_data = base64.b64decode(image_data)
+
+                    # should be in bytes already
+
                     if image_data:
-                        filepath = save_image_to_docker(image_data.split(",")[1], filename)
-                        user_message = f"<img src='/public/image/{filename}' alt='Image'/>"
-                    else:
-                        # Error handling if image data or filename is missing
-                        continue
-                # elif message_type == "imageText":
-                #     # Handle image with text message
-                #     image_data = data.get("image", "")
-                #     filename = data.get("filename", "")
-                #     text = data.get("text", "")
-                #     if image_data and filename:
-                #         filepath = save_image_to_docker(image_data.split(",")[1], filename)
-                #         user_message = f"<img src='/public/images/{filename}' alt='Image'/> {text}"
-                #     else:
-                #         # Error handling if image data, filename, or text is missing
-                #         continue
+                        filename = str(uuid.uuid4()) + ".jpg"
+                        directory_path = "public/image/"
+                        file_path = directory_path + filename
+                        save_image(file_path, byte_data)
+                        user_message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/>'
+
+                elif message_type == "imageText":
+                    message_data = data["message"]
+                    image_data = data["image"]
+                    byte_data = base64.b64decode(image_data)
+
+                    if image_data:
+                        filename = str(uuid.uuid4()) + ".jpg"
+                        directory_path = "public/image/"
+                        file_path = directory_path + filename
+                        save_image(file_path, byte_data)
+                        user_message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/> <br> {message_data}'
+
                 else:
                     # Unsupported message type
-                    continue
+                    pass
 
                 message_id = str(uuid.uuid4())
                 constructed_message = {
@@ -546,43 +526,7 @@ def websocket(ws):
                     client.send(constructed_message)
     finally:
         connected_clients.remove(ws)
-    # while True:  # Keep the loop running until connection is closed
-    #     message = ws.receive()
-    #     if message is not None:  # Check if a message is received
-    #         # Handle WebSocket messages
-    #         ws.send(message)
-    #     else:
-    #         # No message received, exit the loop
-    #         break
-    #
-    #     # Handle file uploads
-    #     file = request.files.get('file')
-    #     if file:
-    #         # Process the uploaded file
-    #         filename = str(uuid.uuid4()) + '_' + file.filename
-    #         directory_path = "public/image/"
-    #         file_path = os.path.join(directory_path, filename)
-    #         file.save(file_path)
-    #         # Send confirmation message or handle as needed
-    #         ws.send(f'File uploaded: {filename}')
 
-
-# WebSocket route
-# @socketio.on('connect', namespace='/websocket')
-# def handle_connect():
-#     connected_clients.add(session.get("username"))  # Add client to connected clients set
-#
-# @socketio.on('disconnect', namespace='/websocket')
-# def handle_disconnect():
-#     connected_clients.remove(session.get("username"))  # Remove client from connected clients set upon disconnection
-#
-# # Other WebSocket event handlers as needed
-# # For example:
-# @socketio.on('message', namespace='/websocket')
-# def handle_message(message):
-#     # Handle WebSocket message
-#     # You can broadcast messages to other clients here if needed
-#     pass
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8080, debug=True)
