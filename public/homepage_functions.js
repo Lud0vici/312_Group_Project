@@ -12,7 +12,6 @@ function initWS() {
         console.log(message)
         const messageType = message.messageType
         console.log(messageType)
-
         addMessageToChat(message)
     }
 }
@@ -75,6 +74,23 @@ function chatMessageHTML(messageJSON) {
     return messageHTML;
 }
 
+//function chatMessageHTML(messageJSON) {
+//    const messageType = messageJSON.messageType;
+//    const username = messageJSON.username;
+//    const message = messageJSON.message;
+//    const messageId = messageJSON.id;
+//
+//    if (messageType === 'image') {
+//        // If the message is an image, construct HTML to display the image
+//        const imgSrc = message; // Assuming 'message' contains the image URL
+//        return `<br><button onclick='deleteMessage("${messageId}")'>X</button> <img src="${imgSrc}" class="message-image">`;
+//    } else {
+//        // If the message is text, construct HTML to display the text message
+//        return `<br><button onclick='deleteMessage("${messageId}")'>X</button> <span id='message_${messageId}'><b>${username}</b>: ${message}</span>`;
+//    }
+//}
+
+
 function clearChat() {
     const chatMessages = document.getElementById("chat-messages");
     chatMessages.innerHTML = "";
@@ -87,15 +103,16 @@ function addMessageToChat(messageJSON) {
     chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
 }
 
-function arrayBufferToBinaryString(buffer) {
-    const bytes = new Uint8Array(buffer);
-    let binaryString = 'b"';
-    for (let i = 0; i < bytes.length; i++) {
-        binaryString += '\\x' + bytes[i].toString(16).padStart(2, '0');
-    }
-    binaryString += '"';
-    return binaryString;
-}
+//function arrayBufferToBinaryString(buffer) {
+//    const bytes = new Uint8Array(buffer);
+//    let binaryString = 'b"';
+//    for (let i = 0; i < bytes.length; i++) {
+//        binaryString += '\\x' + bytes[i].toString(16).padStart(2, '0');
+//    }
+//    binaryString += '"';
+//    console.log(binaryString)
+//    return binaryString;
+//}
 
 function sendChat() {
     const chatTextBox = document.getElementById("postbox");
@@ -110,6 +127,7 @@ function sendChat() {
         if (fileInput.files.length > 0 && message) {
         // If both file and message are provided, send both
             const file = fileInput.files[0];
+            console.log(file)
             const formData = new FormData();
             formData.append('file', file);
 
@@ -124,6 +142,8 @@ function sendChat() {
         } else if (fileInput.files.length > 0) {
             // If only file is provided, send the image
             const file = fileInput.files[0];
+            console.log(file)
+
             const formData = new FormData();
             formData.append('file', file);
 
@@ -132,6 +152,7 @@ function sendChat() {
                 const imageBase64 = event.target.result;
                 const messageType = "image"; // Indicate that this is an image message
                 const data = JSON.stringify({"messageType": messageType, "image": imageBase64});
+                console.log(data)
                 socket.send(data);
             };
             reader.readAsDataURL(file);
