@@ -485,7 +485,7 @@ def websocket(ws):
                 user_message = ""
                 if message_type == "chatMessage":
                     user_message = escape_HTML(data["message"])
-                elif message_type == "image":
+                elif message_type == "image":           #<<<<< IMAGE ONLY
                     # Handle image message
                     image_data = data["image"]
                     # byte_data = base64.b64decode(image_data)
@@ -494,16 +494,18 @@ def websocket(ws):
                     # byte_data = image_data.encode
 
                     if image_data:
-                        filename = str(uuid.uuid4()) + ".jpg"
-                        directory_path = "public/image/"
-                        file_path = directory_path + filename
-                        save_image(file_path, byte_data)
-                        user_message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/>'
-                        #user_message = f"/public/image/{filename}"
-                        # with open(file_path, 'rb') as file:
-                        #     encoded_image_data = base64.b64encode(file.read()).decode('utf-8')
+                        if byte_data.startswith(b"\xff\xd8") or byte_data.startswith(b"\xFF\xD8"):
+                            filename = str(uuid.uuid4()) + ".jpg"
+                            directory_path = "public/image/"
+                            file_path = directory_path + filename
+                            save_image(file_path, byte_data)
+                            user_message = f'<img src="http://localhost:8080/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/>'
 
-                        #user_message = byte_data
+                        # if ():
+                        #     pass
+                        #
+                        # if ():
+                        #     pass
 
                 elif message_type == "imageText":
                     message_data = data["message"]
