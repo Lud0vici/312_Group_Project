@@ -1,9 +1,14 @@
 version: '3.3' 
 services:
+  nginx:
+    build: ./nginx
+    ports:
+      - '80:80'
+      - '443:443'
   TeamRocketMongo: 
     image: mongo:4.2.5
-    ports: 
-    - '27017:27017'
+#    ports:
+#    - '27017:27017'
   app: 
     build: . 
     environment:
