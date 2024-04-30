@@ -1,6 +1,7 @@
 import base64
 import os
 import secrets
+import socket
 import socketserver
 import uuid
 
@@ -18,7 +19,8 @@ import base64
 from werkzeug.utils import secure_filename
 # from flask_socketio import SocketIO, emit
 
-connected_clients = []
+connected_clients = {}
+logged_in_users = set()
 
 app = Flask(__name__, template_folder="src")
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
@@ -456,11 +458,24 @@ def serve_image(filename):
     return send_file(file_path, mimetype=response_content_type)
 
 
+def update_user_list():
+    user_list_update_message = {
+        "messageType": "userList",
+        "users": list(logged_in_users)
+    }
+
+    new_user_list = json.dumps(user_list_update_message)
+    for client in connected_clients:
+        client.send(new_user_list)
+
+
 @sock.route('/websocket')
 def websocket(ws):
-    connected_clients.append(ws)  # Add the client to the set of connected clients
-
     username = session.get("username")
+    connected_clients[ws] = username  # Add the client to the set of connected clients
+    logged_in_users.add(username)
+    update_user_list()
+
     try:
         while True:
             message = ws.receive()
@@ -575,7 +590,11 @@ def websocket(ws):
                 for client in connected_clients:
                     client.send(constructed_message)
     finally:
-        connected_clients.remove(ws)
+        #connected_clients.remove(ws)
+
+        del connected_clients[ws]
+        logged_in_users.remove(username)
+        update_user_list()
 
 
 if __name__ == "__main__":

@@ -8,12 +8,18 @@ function initWS() {
 
     // Called whenever data is received from the server over the WebSocket connection
     socket.onmessage = function (ws_message) {
-        console.log(ws_message.data)
-        const message = JSON.parse(ws_message.data);
-        console.log(message)
-        const messageType = message.messageType
-        console.log(messageType)
-        addMessageToChat(message)
+
+        if(messageType === 'userList'){
+            console.log(message.users)
+            updateUserList(message.users)
+        } else {
+            //console.log(ws_message.data)
+            const message = JSON.parse(ws_message.data);
+            //console.log(message)
+            const messageType = message.messageType
+            //console.log(messageType)
+            addMessageToChat(message)
+        }
     }
 }
 
