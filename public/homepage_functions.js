@@ -11,7 +11,7 @@ function initWS() {
     socket.onmessage = function (ws_message) {
 
         if(messageType === 'userList'){
-            console.log(message.users)
+            //console.log(message.users)
             updateUserList(message.users)
         } else {
             //console.log(ws_message.data)
@@ -24,6 +24,17 @@ function initWS() {
     }
 }
 
+function updateUserList(userList) {
+    var userListElement = document.getElementById("userList");
+    // Clear the existing user list
+    userListElement.innerHTML = "";
+    // Add each user from the updated user list to the user lit on html
+    userList.forEach(function(user) {
+        var listItem = document.createElement("li");
+        listItem.textContent = user;
+        userListElement.appendChild(listItem);
+    });
+}
 
 
 
