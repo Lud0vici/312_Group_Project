@@ -91,25 +91,11 @@ function chatMessageHTML(messageJSON) {
     const messageId = messageJSON.id;
     console.log(messageJSON.id)
     let messageHTML = "<br><button onclick='deleteMessage(\"" + messageId + "\")'>X</button> ";
+//    let messageHTML = "<profile-pic placeholder> ";
     messageHTML += "<span id='message_" + messageId + "'><b>" + username + "</b>: " + message + "</span>";
     return messageHTML;
 }
 
-//function chatMessageHTML(messageJSON) {
-//    const messageType = messageJSON.messageType;
-//    const username = messageJSON.username;
-//    const message = messageJSON.message;
-//    const messageId = messageJSON.id;
-//
-//    if (messageType === 'image') {
-//        // If the message is an image, construct HTML to display the image
-//        const imgSrc = message; // Assuming 'message' contains the image URL
-//        return `<br><button onclick='deleteMessage("${messageId}")'>X</button> <img src="${imgSrc}" class="message-image">`;
-//    } else {
-//        // If the message is text, construct HTML to display the text message
-//        return `<br><button onclick='deleteMessage("${messageId}")'>X</button> <span id='message_${messageId}'><b>${username}</b>: ${message}</span>`;
-//    }
-//}
 
 
 function clearChat() {
@@ -124,16 +110,6 @@ function addMessageToChat(messageJSON) {
     chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
 }
 
-//function arrayBufferToBinaryString(buffer) {
-//    const bytes = new Uint8Array(buffer);
-//    let binaryString = 'b"';
-//    for (let i = 0; i < bytes.length; i++) {
-//        binaryString += '\\x' + bytes[i].toString(16).padStart(2, '0');
-//    }
-//    binaryString += '"';
-//    console.log(binaryString)
-//    return binaryString;
-//}
 
 function sendChat() {
     const chatTextBox = document.getElementById("postbox");
