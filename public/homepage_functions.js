@@ -1,5 +1,6 @@
 const ws = true;
 let socket = null;
+var userList = [];
 
 function initWS() {
     // Establish a WebSocket connection with the server
