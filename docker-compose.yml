@@ -8,7 +8,7 @@ services:
   TeamRocketMongo: 
     image: mongo:4.2.5
     ports:
-    - '127.0.0.1:27017:27017'
+    - '27017:27017'
   app: 
     build: . 
     environment:
