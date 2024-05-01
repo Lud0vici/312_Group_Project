@@ -4,6 +4,7 @@ from pymongo import MongoClient
 import hashlib
 import secrets
 import uuid 
+from datetime import datetime, timedelta
 
 mongo_client = MongoClient("TeamRocketMongo")
 db = mongo_client["TeamRocketDB"] 
@@ -35,3 +36,23 @@ def insert_chat_message(username, message_content):
     message_id = str(uuid.uuid4())
     chat_collection.insert_one({"username": username, "message": message_content, "id": message_id})
     return
+
+def can_earn_coins(username): 
+    user = user_collection.find_one({"username": username})
+    last_earned = user.get("last_earned")
+    if last_earned and (datetime.now() - last_earned) < timedelta(minutes=5):  # 5 minutes cooldown
+        return False
+    return True
+
+def update_last_earned(username): 
+    user_collection.update_one({"username": username}, {"$set": {"last_earned": datetime.now()}})
+
+def add_coins(username, coins): 
+    user_collection.update_one({"username": username}, {"$inc": {"coins": coins}})
+    return get_user_coins(username)
+
+def get_user_coins(username):
+    user = user_collection.find_one({"username": username})
+    return user.get("coins", 0)
+
+
