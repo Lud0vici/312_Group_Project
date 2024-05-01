@@ -75,6 +75,40 @@ def serve_rocket_ball():
     add_no_sniff(response)
     return response
 
+@app.route('/public/image_water/<path:filename>')
+def serve_water_file(filename):
+    return send_from_directory('public/image_water', filename)
+
+# Route for serving files from /public/image_fire
+@app.route('/public/image_fire/<path:filename>')
+def serve_fire_file(filename):
+    return send_from_directory('public/image_fire', filename)
+
+# Route for serving files from /public/image_grass
+@app.route('/public/image_grass/<path:filename>')
+def serve_grass_file(filename):
+    return send_from_directory('public/image_grass', filename)
+
+# Route for listing filenames in /public/image_water directory
+@app.route('/public/image_water')
+def list_water_files():
+    directory = 'public/image_water'
+    files = os.listdir(directory)
+    return jsonify(files)
+
+# Route for listing filenames in /public/image_fire directory
+@app.route('/public/image_fire')
+def list_fire_files():
+    directory = 'public/image_fire'
+    files = os.listdir(directory)
+    return jsonify(files)
+
+# Route for listing filenames in /public/image_grass directory
+@app.route('/public/image_grass')
+def list_grass_files():
+    directory = 'public/image_grass'
+    files = os.listdir(directory)
+    return jsonify(files)
 
 # edit function so that it calls on insertUser to put into database
 @app.route("/register", methods=['POST'])
@@ -357,6 +391,11 @@ def serve_homepage_css():
     add_no_sniff(response)
     return response
 
+@app.route("/profile.css")
+def serve_profile_css():
+    response = send_from_directory("public", "profile.css")
+    add_no_sniff(response)
+    return response
 
 def save_image(filepath, data):
     with open(filepath, 'wb') as f:

@@ -38,7 +38,61 @@ function updateUserList(userList) {
     });
 }
 
+document.addEventListener("DOMContentLoaded", function() {
+    // Show and hide the popup
+    document.getElementById("openPopupBtn").addEventListener("click", function() {
+        document.getElementById("popup").style.display = "block";
+    });
 
+    document.getElementById("closePopupBtn").addEventListener("click", function() {
+        document.getElementById("popup").style.display = "none";
+    });
+
+    // Dynamically create and display profile pictures/starters in the popup
+    var imageGridGrass = document.getElementById("imageGridGrass");
+    var imageGridFire = document.getElementById("imageGridFire");
+    var imageGridWater = document.getElementById("imageGridWater");
+
+    // function fetchAndPopulateImages(directory, imageGrid) {
+    //     fetch(`/public/${directory}`)
+    //         .then(response => response.json())
+    //         .then(data => {
+    //             data.forEach(function(image) {
+    //                 var img = document.createElement("img");
+    //                 img.src = `/public/${directory}/${image}`;
+    //                 imageGrid.appendChild(img);
+    //             });
+    //         })
+    //         .catch(error => console.error("Error fetching image files:", error));
+    // }
+
+    function fetchAndPopulateImages(directory, imageGrid) {
+        fetch(`/public/${directory}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(function(image) {
+                    var button = document.createElement("div"); // Create a <div> element
+                    button.classList.add("imageButton"); // Add a class for styling
+                    button.style.backgroundImage = `url('/public/${directory}/${image}')`; // Set background image
+                    button.addEventListener("click", function() {
+                        // Send message to backend
+                        sendMessageToBackend(directory, image); // Replace with actual function
+                    });
+                    imageGrid.appendChild(button);
+                });
+            })
+            .catch(error => console.error("Error fetching image files:", error));
+    }
+
+    function sendMessageToBackend(directory, image) {
+        // Replace this with your logic to send a message to the backend
+        console.log(`Clicked image in directory ${directory}: ${image}`);
+    }
+
+    fetchAndPopulateImages("image_grass", imageGridGrass);
+    fetchAndPopulateImages("image_fire", imageGridFire);
+    fetchAndPopulateImages("image_water", imageGridWater);
+});
 
 
 

@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="homepageStyle.css"/>
+  <link rel="stylesheet" type="text/css" href="profile.css"/>
   <script src="/homepage_functions.js"></script>
   <title>Home Page</title>
 
@@ -39,28 +40,54 @@
     </div>
 
 <form action="/upload" method="post" enctype="multipart/form-data" id="post-form">
-    <div class="chat-form">
-        <label for="postbox">Create a Post:</label>
-        <br>
-        <textarea id="postbox" name="post_content" class="postTextarea" rows="8" cols="50" ></textarea>
-        <br>
-        <input type="file" id="file" name="file" accept="image/*, video/*, audio/*" >
-<!--        <button type="submit" id="chat-button">Send</button>-->
-        <button id="chat-button1" onclick="sendChat()"> Send </button>
-        <script>
-        // Get the button element
-        const button = document.getElementById('chat-button1');
+  <div class="profile-form">
+    <h2>Change Starter</h2>
+    <button type="button" id="openPopupBtn">Select Profile Picture</button>
 
-        // Add click event listener
-        button.addEventListener('click', function(event) {
-            // Prevent the default action (refreshing the page)
-            event.preventDefault();
-
-            // Add your button click logic here
-            console.log('Button clicked!');
-        });
-        </script>
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close" id="closePopupBtn">&times;</span>
+            <h2>Select Profile Picture</h2>
+            <div id="imageGridContainer">
+              <div class="column">
+                  <h2>Grass</h2>
+                  <div id="imageGridGrass" class="imageGrid"></div>
+              </div>
+              <div class="column">
+                  <h2>Fire</h2>
+                  <div id="imageGridFire" class="imageGrid"></div>
+              </div>
+              <div class="column">
+                  <h2>Water</h2>
+                  <div id="imageGridWater" class="imageGrid"></div>
+              </div>
+          </div>
+        </div>
     </div>
+  </div>
+
+  <div class="chat-form">
+      <label for="postbox">Create a Post:</label>
+      <br>
+      <textarea id="postbox" name="post_content" class="postTextarea" rows="8" cols="50" ></textarea>
+      <br>
+      <input type="file" id="file" name="file" accept="image/*, video/*, audio/*" >
+<!--        <button type="submit" id="chat-button">Send</button>-->
+      <button id="chat-button1" onclick="sendChat()"> Send </button>
+      <script>
+      // Get the button element
+      const button = document.getElementById('chat-button1');
+
+      // Add click event listener
+      button.addEventListener('click', function(event) {
+          // Prevent the default action (refreshing the page)
+          event.preventDefault();
+
+          // Add your button click logic here
+          console.log('Button clicked!');
+      });
+      </script>
+  </div>
 
     <div>
         <br>
