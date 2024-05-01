@@ -90,4 +90,8 @@ h1 {
     padding: 10px;
 }
 
-
+.ProfilePic {
+    width: 100px; /* Adjust width as needed */
+    height: 100px; /* Adjust height as needed */
+    background-size: cover;
+}

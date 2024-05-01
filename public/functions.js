@@ -1,5 +1,5 @@
 function welcome(){
-    document.getElementById("intro").innerHTML += "<br>Welcome to Team Rocket's Reddit! 😆";
+    document.getElementById("intro").innerHTML += "<br>Rating Restaurants at the Speed of Light! 😆";
     document.getElementById('confirm-password').addEventListener('keyup', checkPassword);
 }
 
