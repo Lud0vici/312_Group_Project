@@ -4,7 +4,7 @@ var userList = [];
 
 function initWS() {
     // Establish a WebSocket connection with the server
-    socket = new WebSocket('ws://' + window.location.host + '/websocket');
+    socket = new WebSocket('wss://' + window.location.host + '/websocket');
     //    socket = new WebSocket('wss://' + window.location.host + '/websocket');
 
     // Called whenever data is received from the server over the WebSocket connection
