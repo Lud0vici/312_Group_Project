@@ -1,5 +1,5 @@
 # 312_Group_Project
 
-hello, welcome to our project: Team Rocket's Rocket Reddit. 
+Hello, welcome to our project: Team Rocket's Rocket Reddit. 
 
-https://rocketreddit.netlify.app/
+http://rocketreddit.com

@@ -1,21 +1,42 @@
 const ws = true;
 let socket = null;
+var userList = [];
 
 function initWS() {
     // Establish a WebSocket connection with the server
-    socket = new WebSocket('ws://' + window.location.host + '/websocket');
+    socket = new WebSocket('wss://' + window.location.host + '/websocket');
+    //    socket = new WebSocket('wss://' + window.location.host + '/websocket');
 
     // Called whenever data is received from the server over the WebSocket connection
     socket.onmessage = function (ws_message) {
-        console.log(ws_message.data)
         const message = JSON.parse(ws_message.data);
-        console.log(message)
         const messageType = message.messageType
-        console.log(messageType)
-        addMessageToChat(message)
+
+        if(messageType === 'userList'){
+            //console.log(message.users)
+            updateUserList(message.users)
+        } else {
+            //console.log(ws_message.data)
+            //const message = JSON.parse(ws_message.data);
+            //console.log(message)
+            //const messageType = message.messageType
+            //console.log(messageType)
+            addMessageToChat(message)
+        }
     }
 }
 
+function updateUserList(userList) {
+    var userListElement = document.getElementById("userList");
+    // Clear the existing user list
+    userListElement.innerHTML = "";
+    // Add each user from the updated user list to the user lit on html
+    userList.forEach(function(user) {
+        var listItem = document.createElement("li");
+        listItem.textContent = user;
+        userListElement.appendChild(listItem);
+    });
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     // Show and hide the popup
@@ -124,25 +145,11 @@ function chatMessageHTML(messageJSON) {
     const messageId = messageJSON.id;
     console.log(messageJSON.id)
     let messageHTML = "<br><button onclick='deleteMessage(\"" + messageId + "\")'>X</button> ";
+//    let messageHTML = "<profile-pic placeholder> ";
     messageHTML += "<span id='message_" + messageId + "'><b>" + username + "</b>: " + message + "</span>";
     return messageHTML;
 }
 
-//function chatMessageHTML(messageJSON) {
-//    const messageType = messageJSON.messageType;
-//    const username = messageJSON.username;
-//    const message = messageJSON.message;
-//    const messageId = messageJSON.id;
-//
-//    if (messageType === 'image') {
-//        // If the message is an image, construct HTML to display the image
-//        const imgSrc = message; // Assuming 'message' contains the image URL
-//        return `<br><button onclick='deleteMessage("${messageId}")'>X</button> <img src="${imgSrc}" class="message-image">`;
-//    } else {
-//        // If the message is text, construct HTML to display the text message
-//        return `<br><button onclick='deleteMessage("${messageId}")'>X</button> <span id='message_${messageId}'><b>${username}</b>: ${message}</span>`;
-//    }
-//}
 
 
 function clearChat() {
@@ -157,16 +164,6 @@ function addMessageToChat(messageJSON) {
     chatMessages.scrollTop = chatMessages.scrollHeight - chatMessages.clientHeight;
 }
 
-//function arrayBufferToBinaryString(buffer) {
-//    const bytes = new Uint8Array(buffer);
-//    let binaryString = 'b"';
-//    for (let i = 0; i < bytes.length; i++) {
-//        binaryString += '\\x' + bytes[i].toString(16).padStart(2, '0');
-//    }
-//    binaryString += '"';
-//    console.log(binaryString)
-//    return binaryString;
-//}
 
 function sendChat() {
     const chatTextBox = document.getElementById("postbox");
