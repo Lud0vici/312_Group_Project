@@ -176,6 +176,14 @@ function sendChat() {
         // Using WebSockets
 //        socket.send(JSON.stringify({'messageType': 'chatMessage', 'message': message}));
 //        console.log("ws")
+
+        if (fileInput.files.length > 0 && fileInput.files[0].size > 5500 * 1024) {
+            // Check if file size exceeds 6,000 KB (6 MB)
+            console.log("File size exceeds the limit.");
+            window.alert("File size exceeds the limit.");
+            return;
+        }
+
         if (fileInput.files.length > 0 && message) {
         // If both file and message are provided, send both
             const file = fileInput.files[0];
