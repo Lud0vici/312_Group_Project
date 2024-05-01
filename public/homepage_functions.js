@@ -4,7 +4,7 @@ var userList = [];
 
 function initWS() {
     // Establish a WebSocket connection with the server
-    socket = new WebSocket('wss://' + window.location.host + '/websocket');
+    socket = new WebSocket('ws://' + window.location.host + '/websocket');
     //    socket = new WebSocket('wss://' + window.location.host + '/websocket');
 
     // Called whenever data is received from the server over the WebSocket connection
@@ -53,19 +53,6 @@ document.addEventListener("DOMContentLoaded", function() {
     var imageGridFire = document.getElementById("imageGridFire");
     var imageGridWater = document.getElementById("imageGridWater");
 
-    // function fetchAndPopulateImages(directory, imageGrid) {
-    //     fetch(`/public/${directory}`)
-    //         .then(response => response.json())
-    //         .then(data => {
-    //             data.forEach(function(image) {
-    //                 var img = document.createElement("img");
-    //                 img.src = `/public/${directory}/${image}`;
-    //                 imageGrid.appendChild(img);
-    //             });
-    //         })
-    //         .catch(error => console.error("Error fetching image files:", error));
-    // }
-
     function fetchAndPopulateImages(directory, imageGrid) {
         fetch(`/public/${directory}`)
             .then(response => response.json())
@@ -87,6 +74,15 @@ document.addEventListener("DOMContentLoaded", function() {
     function sendMessageToBackend(directory, image) {
         // Replace this with your logic to send a message to the backend
         console.log(`Clicked image in directory ${directory}: ${image}`);
+
+        // Get the postbox textarea element
+        const postbox = document.getElementById("postbox");
+        
+        // Construct the URL of the clicked image
+        const imageURL = `/public/${directory}/${image}`;
+        
+        // Set the value of the postbox to the image URL
+        postbox.value = imageURL;
     }
 
     fetchAndPopulateImages("image_grass", imageGridGrass);
@@ -94,15 +90,16 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchAndPopulateImages("image_water", imageGridWater);
 });
 
-
-
-
-
-
-
-
-
-
+function replaceProfilePic(img) {
+    // Get the postbox textarea element
+    const postbox = document.getElementById("postbox");
+    
+    // Get the URL of the clicked image
+    const imageURL = img.src;
+    
+    // Set the value of the postbox to the image URL
+    postbox.value = imageURL;
+}
 
 function toggleLike(index) {
     if (posts[index].liked) {
@@ -139,18 +136,22 @@ function toggleLike(index) {
 //});
 
 function chatMessageHTML(messageJSON) {
-    console.log(messageJSON)
+    console.log(messageJSON);
     const username = messageJSON.username;
     const message = messageJSON.message;
     const messageId = messageJSON.id;
-    console.log(messageJSON.id)
-    let messageHTML = "<br><button onclick='deleteMessage(\"" + messageId + "\")'>X</button> ";
-//    let messageHTML = "<profile-pic placeholder> ";
+    console.log(messageJSON.id);
+
+    // Define the placeholder image URL
+    const placeholderImageURL = 'public/image/placeholder_user.jpg';
+
+    // Create an image element with the placeholder image
+    let messageHTML = "<img src='" + placeholderImageURL + "' alt='Placeholder Image' class='ProfilePic'/> ";
+
+    // Append the message content
     messageHTML += "<span id='message_" + messageId + "'><b>" + username + "</b>: " + message + "</span>";
     return messageHTML;
 }
-
-
 
 function clearChat() {
     const chatMessages = document.getElementById("chat-messages");
