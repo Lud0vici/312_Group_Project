@@ -177,11 +177,12 @@ function chatMessageHTML(messageJSON) {
     const username = messageJSON.username;
     const message = messageJSON.message;
     const messageId = messageJSON.id;
-    // const profilePic = messageJSON.profilePic;
+    const profilePic = messageJSON.profilePic;
     console.log(messageJSON.id);
+    console.log(messageJSON.profilePic)
 
     // Create an image element with the placeholder image
-    let messageHTML = "<img src='" + ImageUrl + "' alt='Profile Picture' class='ProfilePic'/> ";
+    let messageHTML = "<img src='" + profilePic + "' alt='Profile Picture' class='ProfilePic'/> ";
 
     // Append the message content
     messageHTML += "<span id='message_" + messageId + "'><b>" + username + "</b>: " + message + "</span>";
@@ -207,6 +208,14 @@ function sendChat() {
     const message = chatTextBox.value;
     chatTextBox.value = "";
 
+    if (fileInput.files.length > 0 && fileInput.files[0].size > 5500 * 1024) {
+            // Check if file size exceeds 5500 KB (5.5 MB)
+            console.log("File size exceeds the limit.");
+            window.alert("File size exceeds the limit.");
+            return;
+        }
+
+
     if (ws) {
         if (fileInput.files.length > 0 && message) {
             // If both file and message are provided, send both
@@ -223,7 +232,7 @@ function sendChat() {
                     "messageType": messageType,
                     "message": message,
                     "image": imageBase64,
-                    // "profilePic": ImageUrl // Set the profile picture here
+                    "profilePic": ImageUrl // Set the profile picture here
                 });
                 socket.send(data);
             };
@@ -242,7 +251,7 @@ function sendChat() {
                 const data = JSON.stringify({
                     "messageType": messageType,
                     "image": imageBase64,
-                    // "profilePic": ImageUrl // Set the profile picture here
+                    "profilePic": ImageUrl // Set the profile picture here
                 });
                 socket.send(data);
             };
@@ -253,7 +262,7 @@ function sendChat() {
             const data = JSON.stringify({
                 "messageType": messageType,
                 "message": message,
-                // "profilePic": ImageUrl // Set the profile picture here
+                "profilePic": ImageUrl // Set the profile picture here
             });
             socket.send(data);
         } else {
