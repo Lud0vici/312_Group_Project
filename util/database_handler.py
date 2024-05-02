@@ -23,7 +23,8 @@ def insert_user(first_name, last_name, email, username, salt, hashedPassword):
             "username": username,
             "salt": salt,
             "password": hashedPassword,
-            "auth_token": ""
+            "auth_token": "",
+            "coins": 0
             })
 
 def salt_and_hash_password(password):
@@ -37,6 +38,7 @@ def insert_chat_message(username, message_content):
     chat_collection.insert_one({"username": username, "message": message_content, "id": message_id})
     return
 
+#function to determine if user can get coins once timer ends 
 def can_earn_coins(username): 
     user = user_collection.find_one({"username": username})
     last_earned = user.get("last_earned")
@@ -44,15 +46,21 @@ def can_earn_coins(username):
         return False
     return True
 
+#function to detemine when the last time user got coins 
 def update_last_earned(username): 
     user_collection.update_one({"username": username}, {"$set": {"last_earned": datetime.now()}})
 
+#function to increment the users coins 
 def add_coins(username, coins): 
     user_collection.update_one({"username": username}, {"$inc": {"coins": coins}})
     return get_user_coins(username)
 
+#function to return the @ of coins a user has 
 def get_user_coins(username):
     user = user_collection.find_one({"username": username})
-    return user.get("coins", 0)
+
+    #if user["coins"] is not 0:
+    return user["coins"]
+    #return user.get("coins", 0)
 
 
