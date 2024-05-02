@@ -95,3 +95,8 @@ h1 {
     height: 100px; /* Adjust height as needed */
     background-size: cover;
 }
+
+.close {
+    font-size: 24px; /* Adjust the font size as needed */
+    padding: 10px; /* Optional: Adjust padding for spacing */
+}

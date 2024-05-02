@@ -63,6 +63,16 @@ document.addEventListener("DOMContentLoaded", function() {
                     button.classList.add("imageButton"); // Add a class for styling
                     button.style.backgroundImage = `url('/public/${directory}/${image}')`; // Set background image
                     button.addEventListener("click", function() {
+                        // Remove glowing effect from previously selected buttons
+                        var allButtons = document.querySelectorAll(".imageButton");
+                        allButtons.forEach(btn => {
+                            btn.classList.remove("selected_starter_image");
+                        });
+
+                        // Add glowing effect to the clicked button
+                        button.classList.add("selected_starter_image");
+
+
                         // Send message to backend and update ImageUrl
                         sendMessageToBackend(directory, image);
                     });

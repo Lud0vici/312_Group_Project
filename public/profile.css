@@ -6,9 +6,11 @@
     transform: translate(-50%, -50%);
     background-color: white;
     padding: 20px;
-    border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* border: 1px solid #ccc; */
+    box-shadow: 0 5px 20px 5px rgba(0, 0, 0, 0.7);
+    background-image: linear-gradient(to right, rgb(131, 128, 107), rgb(94, 91, 103), rgb(72, 66, 91));
     z-index: 999;
+    border-radius: 10px;
 }
 
 .popup-content {
@@ -35,12 +37,13 @@
 .imageGrid {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
 .imageGrid img {
     max-width: 100%;
     height: auto;
+    border-radius: 10px;
 }
 
 .imageButton {
@@ -48,16 +51,43 @@
     height: 100px; /* Adjust height as needed */
     background-size: cover;
     cursor: pointer;
+    display: inline-block;
 }
 
 #imageGridGrass {
-    background-color: #44AE40;
+    /* background-color: #44AE40; */
+    background-image: linear-gradient(to right, #3a9937, #296926);
+    border-radius: 10px;
+
 }
 
 #imageGridFire {
-    background-color: #A23F47;
+    /* background-color: #A23F47; */
+    background-image: linear-gradient(to right, #c1545d, #7c383e);
+    border-radius: 10px;
+
 }
 
 #imageGridWater {
-    background-color: #4048BB;
+    /* background-color: #4048BB; */
+    background-image: linear-gradient(to right, #4048BB, #2b307b);
+    
+    border-radius: 10px;
+
 }
+
+.imageButton.selected_starter_image {
+    animation: glow infinite alternate;
+    animation-duration: 2s;
+    border-radius: 10px;
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 20px 10px rgb(255, 217, 0);
+    }
+    to {
+        box-shadow: 0 0 20px 10px rgba(255, 255, 0, 0);
+    }
+}
+

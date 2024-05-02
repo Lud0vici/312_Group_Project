@@ -20,6 +20,7 @@ body {
     color: white;
     display: flex;
     justify-content: center; /* Center content horizontally */
+    align-items: center;
     width: 60%; /* Set width to 60% of the viewport */
     height: 100vh; /* Set height to 100% of the viewport height */
     position: relative;
@@ -88,8 +89,8 @@ button:hover {
 }
 
 .rocket_ball {
-    height: 25%;
-    width: 25%;
+    height: 200px;
+    width: 200px;
 }
 
 /* Style for the checklist items */
