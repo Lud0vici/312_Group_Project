@@ -40,7 +40,7 @@ def insert_chat_message(username, message_content):
 def can_earn_coins(username): 
     user = user_collection.find_one({"username": username})
     last_earned = user.get("last_earned")
-    if last_earned and (datetime.now() - last_earned) < timedelta(minutes=5):  # 5 minutes cooldown
+    if last_earned and (datetime.now() - last_earned) < timedelta(minutes=1):  # 5 minutes cooldown
         return False
     return True
 

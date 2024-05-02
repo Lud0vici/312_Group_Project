@@ -223,7 +223,7 @@ def serve_homepage():
     add_no_sniff(response)
     return response
 
-@app.route("/earn-coins", method = ['POST'])
+@app.route("/earn-coins", methods = ['POST'])
 def earn_coins(): 
     username= session.get("username") 
     if not database_handler.can_earn_coins(username): 
@@ -231,8 +231,8 @@ def earn_coins():
     coins_earned = random.randint(1,100) 
     database_handler.update_last_earned(username) 
     new_coin_count = database_handler.add_coins(username, coins_earned)
-    return  redirect(url_for('serve_homepage'))
-@sock.route('/websocket') 
+    return  jsonify({'message': 'Coins added successfully','coins_earned': coins_earned, 'new_coin_count': new_coin_count }), 200
+#@sock.route('/websocket') 
 # def coin_earning(ws): 
 #     while True: 
 #         data = ws.receive() 
