@@ -5,7 +5,7 @@ let ImageUrl = "public/image/placeholder_user.jpg";
 
 function initWS() {
     // Establish a WebSocket connection with the server
-    socket = new WebSocket('ws://' + window.location.host + '/websocket');
+    socket = new WebSocket('wss://' + window.location.host + '/websocket');
     //    socket = new WebSocket('wss://' + window.location.host + '/websocket');
 
     // Called whenever data is received from the server over the WebSocket connection
@@ -40,6 +40,8 @@ function updateUserList(userList) {
 }
 
 document.addEventListener("DOMContentLoaded", function() {
+    //---Profile Section---//
+
     // Show and hide the popup
     document.getElementById("openPopupBtn").addEventListener("click", function() {
         document.getElementById("popup").style.display = "block";
@@ -96,7 +98,69 @@ document.addEventListener("DOMContentLoaded", function() {
     fetchAndPopulateImages("image_grass", imageGridGrass);
     fetchAndPopulateImages("image_fire", imageGridFire);
     fetchAndPopulateImages("image_water", imageGridWater);
+
+    //---Pokecoin Section---//
+
+    document.getElementById('earn-coins-button').addEventListener('click', earnCoins);
+
 });
+
+
+
+function earnCoins() {
+    fetch('/earn-coins', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            document.getElementById('coin-count').textContent = 'PokeCoins: ' + data.new_coin_count;
+            alert('PokeCoins earned: ' + data.coins_earned);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while trying to earn coins.');
+    });
+}
+
+function handleButtonClick() {
+    var button = document.getElementById("earn-coins-button");
+    var lastClickTime = localStorage.getItem("lastClickTime");
+    var currentTime = Date.now();
+
+    // Check if the button was clicked within the last minute
+    if (lastClickTime && (currentTime - lastClickTime < 60000)) {
+        alert("Please wait before clicking again.");
+        return;
+    }
+
+    // Store the current time when the button is clicked
+    localStorage.setItem("lastClickTime", currentTime);
+
+    // Proceed with the timer logic
+    button.disabled = true; // Disable the button
+    var count = 60; // Countdown time in seconds
+    var timer = setInterval(function() {
+        var timerText = document.getElementById("timerText");
+        timerText.innerHTML = "Please wait " + count + " seconds for more Pokecoins";
+        count--;
+        if (count < 0) {
+            clearInterval(timer);
+            timerText.innerHTML = ""; // Clear the timer text
+            button.disabled = false; // Re-enable the button
+        }
+    }, 1000); // Update every second
+}
+
+
+
+
 
 function toggleLike(index) {
     if (posts[index].liked) {

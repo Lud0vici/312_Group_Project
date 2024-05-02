@@ -4,6 +4,7 @@ import secrets
 import socket
 import socketserver
 import uuid
+import random 
 
 # import socketio as socketio
 from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, \
@@ -58,6 +59,7 @@ def serve_homepage_js():
     response = send_from_directory("public", "homepage_functions.js")
     add_no_sniff(response)
     return response
+
 
 
 @app.route("/login-registration.css")
@@ -227,6 +229,21 @@ def serve_homepage():
     add_no_sniff(response)
     return response
 
+@app.route("/earn-coins", methods = ['POST'])
+def earn_coins(): 
+    username= session.get("username") 
+    if not database_handler.can_earn_coins(username): 
+        return redirect(url_for('serve_homepage'))
+    coins_earned = random.randint(1,100) 
+    database_handler.update_last_earned(username) 
+    new_coin_count = database_handler.add_coins(username, coins_earned)
+    return  jsonify({'message': 'Coins added successfully','coins_earned': coins_earned, 'new_coin_count': new_coin_count }), 200
+#@sock.route('/websocket') 
+# def coin_earning(ws): 
+#     while True: 
+#         data = ws.receive() 
+#         if data['action'] == 'earn_coins':
+#             username = session.get("username")
 
 @app.route("/logout", methods=["POST"])
 def serve_logout():  # serve logout button when we have the user on our actual page, not login or registration
