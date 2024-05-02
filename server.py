@@ -231,14 +231,15 @@ def serve_homepage():
         response.status_code = 404
         return response
     print("USERNAME 2-------------", username)
-    user_pokecoins = database_handler.get_user_coins(username)
+    #user_pokecoins = database_handler.get_user_coins(username)
+    user_pokecoins = str(user_data["coins"])
     print("POKECOINS ----------------------", user_pokecoins)
 
     with open("src/HomePage.html", "rb") as file:
         file_contents = file.read()
 
-    file_contents = file_contents.replace(b"{{user}}f", username.encode())
-    file_contents = file_contents.replace(b"{{pokecoins}}", bytes(user_pokecoins))
+    file_contents = file_contents.replace(b"{{user}}", username.encode())
+    file_contents = file_contents.replace(b"{{pokecoins}}", user_pokecoins.encode())
     response = make_response(file_contents)
     add_no_sniff(response)
     return response
