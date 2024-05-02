@@ -10,9 +10,9 @@ import random
 from flask import Flask, send_from_directory, request, redirect, url_for, make_response, jsonify, render_template, \
     session, send_file
 from flask_sock import Sock
-from util import database_handler
+from util import database_handler 
 from util import auth
-from util.database_handler import user_collection
+from util.database_handler import user_collection , get_user_coins
 import hashlib
 from datetime import datetime, timedelta
 import json
@@ -204,6 +204,13 @@ def serve_login():
 def serve_homepage():
     username = session.get("username")
     auth_token = request.cookies.get("authentication-token")
+    # user_data = user_data
+
+    # hashed_token = hashlib.sha256(auth_token.encode()).hexdigest()
+    # user_data = user_collection.find_one({"auth_token": hashed_token})
+
+    # username = user_data["username"]
+    print(username)
 
     if not username or not auth_token:
         # If username or authentication token is not found, return 404
@@ -211,6 +218,8 @@ def serve_homepage():
         add_no_sniff(response)
         response.status_code = 404
         return response
+    
+
 
     hashed_token = hashlib.sha256(auth_token.encode()).hexdigest()
     user_data = user_collection.find_one({"username": username, "auth_token": hashed_token})
@@ -221,10 +230,15 @@ def serve_homepage():
         add_no_sniff(response)
         response.status_code = 404
         return response
+    print("USERNAME 2-------------", username)
+    user_pokecoins = database_handler.get_user_coins(username)
+    print("POKECOINS ----------------------", user_pokecoins)
 
     with open("src/HomePage.html", "rb") as file:
         file_contents = file.read()
-    file_contents = file_contents.replace(b"{{user}}", username.encode())
+
+    file_contents = file_contents.replace(b"{{user}}f", username.encode())
+    file_contents = file_contents.replace(b"{{pokecoins}}", bytes(user_pokecoins))
     response = make_response(file_contents)
     add_no_sniff(response)
     return response
