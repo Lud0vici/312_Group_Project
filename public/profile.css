@@ -52,6 +52,12 @@
     background-size: cover;
     cursor: pointer;
     display: inline-block;
+    transition: background-color 0.3s ease;
+    border-radius: 10px;
+}
+
+.imageButton:hover {
+    background-color: rgba(255, 255, 255, 0.5); /* Lighten the background color on hover */
 }
 
 #imageGridGrass {
@@ -78,8 +84,9 @@
 
 .imageButton.selected_starter_image {
     animation: glow infinite alternate;
-    animation-duration: 2s;
+    animation-duration: 1.5s;
     border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
 @keyframes glow {
