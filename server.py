@@ -384,7 +384,8 @@ def get_chat_messages():
         message = data["message"]
         username = data["username"]
         msg_id = data["id"]
-        chat_entry = {"message": message, "username": username, "id": msg_id}
+        profile_Pic = data["profilePic"]
+        chat_entry = {"message": message, "username": username, "id": msg_id, "profilePic": profile_Pic}
         chat_history.append(chat_entry)
     chat_history_json = json.dumps(chat_history)
     response = make_response(chat_history_json)
@@ -637,7 +638,8 @@ def websocket(ws):
                     "messageType": data["messageType"],
                     "username": str(username),
                     "message": user_message,
-                    "id": message_id
+                    "id": message_id,
+                    "profilePic": data["profilePic"]
                 }
 
                 # how to serve images, and images+text???
@@ -645,7 +647,8 @@ def websocket(ws):
                     "messageType": data["messageType"],
                     "username": username,
                     "message": user_message,
-                    "id": message_id
+                    "id": message_id,
+                    "profilePic": data["profilePic"]
                 })
 
                 constructed_message = json.dumps(constructed_message)
