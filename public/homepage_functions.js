@@ -207,6 +207,14 @@ function sendChat() {
     const message = chatTextBox.value;
     chatTextBox.value = "";
 
+    if (fileInput.files.length > 0 && fileInput.files[0].size > 5500 * 1024) {
+            // Check if file size exceeds 5500 KB (5.5 MB)
+            console.log("File size exceeds the limit.");
+            window.alert("File size exceeds the limit.");
+            return;
+        }
+
+
     if (ws) {
         if (fileInput.files.length > 0 && message) {
             // If both file and message are provided, send both
