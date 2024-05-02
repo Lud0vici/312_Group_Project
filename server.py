@@ -73,9 +73,11 @@ def serve_rocket_ball():
     add_no_sniff(response)
     return response
 
-@app.route('/favicon.ico')
+@app.route('/public/image/favicon.ico')
 def serve_favicon():
-    return send_from_directory('public', 'image/favicon.ico', mimetype='image/vnd.microsoft.icon')
+    response = send_from_directory('public', 'image/favicon.ico', mimetype='image/vnd.microsoft.icon')
+    add_no_sniff(response)
+    return response
 
 @app.route('/public/image_water/<path:filename>')
 def serve_water_file(filename):
