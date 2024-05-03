@@ -597,7 +597,7 @@ def websocket(ws):
                             directory_path = "public/image/"
                             file_path = directory_path + filename
                             save_image(file_path, byte_data)
-                            user_message = f'<video width="400" controls autoplay muted><source src="/public/image/{filename}" type="video/mp4"> alt="{filename}</video>'
+                            user_message = f'<video width="200" controls autoplay muted><source src="/public/image/{filename}" type="video/mp4"> alt="{filename}</video>'
 
                         if byte_data.startswith(b"\x49\x44\x33"):
                             filename = str(uuid.uuid4()) + ".mp3"
@@ -617,21 +617,21 @@ def websocket(ws):
                             directory_path = "public/image/"
                             file_path = directory_path + filename
                             save_image(file_path, byte_data)
-                            user_message = f'<img src="/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/> <br> {message_data}'
+                            user_message = f'<img src="/public/image/{filename}" type="image/jpeg" alt="{filename}" class="my_image"/>{message_data}'
 
                         if byte_data.startswith(b"\x89\x50\x4E\x47\x0D\x0A\x1A\x0A") or byte_data.startswith(b"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"):
                             filename = str(uuid.uuid4()) + ".png"
                             directory_path = "public/image/"
                             file_path = directory_path + filename
                             save_image(file_path, byte_data)
-                            user_message = f'<img src="/public/image/{filename}" type="image/png" alt="{filename}" class="my_image"/> <br> {message_data}'
+                            user_message = f'<img src="/public/image/{filename}" type="image/png" alt="{filename}" class="my_image"/>{message_data}'
 
                         if byte_data.startswith(b"\x47\x49\x46\x38\x37\x61") or byte_data.startswith(b"\x47\x49\x46\x38\x39\x61"):
                             filename = str(uuid.uuid4()) + ".gif"
                             directory_path = "public/image/"
                             file_path = directory_path + filename
                             save_image(file_path, byte_data)
-                            user_message = f'<img src="/public/image/{filename}" type="image/gif" alt="{filename}" class="my_image"/> <br> {message_data}'
+                            user_message = f'<img src="/public/image/{filename}" type="image/gif" alt="{filename}" class="my_image"/>{message_data}'
 
                         mp4_file_signature = byte_data[:8]
                         if mp4_file_signature.endswith(b"ftyp"):
@@ -639,14 +639,14 @@ def websocket(ws):
                             directory_path = "public/image/"
                             file_path = directory_path + filename
                             save_image(file_path, byte_data)
-                            user_message = f'<video width="400" controls autoplay muted><source src="/public/image/{filename}" type="video/mp4"> alt="{filename}</video> <br> {message_data}'
+                            user_message = f'<video width="200" controls autoplay muted><source src="/public/image/{filename}" type="video/mp4"> alt="{filename}</video>{message_data}'
 
                         if byte_data.startswith(b"\x49\x44\x33"):
                             filename = str(uuid.uuid4()) + ".mp3"
                             directory_path = "public/image/"
                             file_path = directory_path + filename
                             save_image(file_path, byte_data)
-                            user_message = f'<audio controls><source src="/public/image/{filename}" type="audio/mpeg"> alt="{filename}</audio> <br> {message_data}'
+                            user_message = f'<audio controls><source src="/public/image/{filename}" type="audio/mpeg"> alt="{filename}</audio>{message_data}'
 
                 message_id = str(uuid.uuid4())
                 constructed_message = {
