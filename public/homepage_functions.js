@@ -5,7 +5,7 @@ let ImageUrl = "public/image/placeholder_user.jpg";
 
 function initWS() {
     // Establish a WebSocket connection with the server
-    socket = new WebSocket('wss://' + window.location.host + '/websocket');
+    socket = new WebSocket('ws://' + window.location.host + '/websocket');
     //    socket = new WebSocket('wss://' + window.location.host + '/websocket');
 
     // Called whenever data is received from the server over the WebSocket connection
@@ -182,10 +182,10 @@ function chatMessageHTML(messageJSON) {
     console.log(messageJSON.profilePic)
 
     // Create an image element with the placeholder image
-    let messageHTML = "<img src='" + profilePic + "' alt='Profile Picture' class='ProfilePic'/> ";
+    let messageHTML = "<div><img src='" + profilePic + "' alt='Profile Picture' class='ProfilePic'/> ";
 
     // Append the message content
-    messageHTML += "<span id='message_" + messageId + "'><b>" + username + "</b>: " + message + "</span>";
+    messageHTML += "<span id='message_" + messageId + "'><b>" + username + "</b>: " + message + "</span></div>";
     return messageHTML;
 }
 
@@ -235,6 +235,7 @@ function sendChat() {
                     "profilePic": ImageUrl // Set the profile picture here
                 });
                 socket.send(data);
+                fileInput.value = '';
             };
             reader.readAsDataURL(file);
         } else if (fileInput.files.length > 0) {
@@ -254,6 +255,7 @@ function sendChat() {
                     "profilePic": ImageUrl // Set the profile picture here
                 });
                 socket.send(data);
+                fileInput.value = '';
             };
             reader.readAsDataURL(file);
         } else if (message) {
@@ -265,6 +267,7 @@ function sendChat() {
                 "profilePic": ImageUrl // Set the profile picture here
             });
             socket.send(data);
+            fileInput.value = '';
         } else {
             // Handle the case where neither a file nor a message is provided
             console.log("Please select a file or enter a message.");
