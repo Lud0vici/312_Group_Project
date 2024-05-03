@@ -1,5 +1,6 @@
 body {
     background-color: #ff5e5e;
+    /* background-image: linear-gradient(to right, #ff5e5e, #ab3b3b); */
     overflow: hidden;
 }
 
@@ -15,7 +16,18 @@ h1 {
     position: absolute;
     top: 0;
     left: 0;
+    display: flex;
+    align-items: center; /* Align items vertically */
 }
+
+/* .logout-form,
+.profile-form {
+    margin-right: 30px; /* Add margin to separate the buttons */
+
+  
+/* .profile-form {
+    margin-left: auto; /* Push the profile form to the right */
+
 
 .title {
   height: 5%;

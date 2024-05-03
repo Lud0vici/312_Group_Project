@@ -23,6 +23,30 @@
     <form id="logout-form" action="/logout" method="post">
       <button type="submit" class="logout-button">Logout</button>
     </form>
+    <!-- <p>&nbsp;</p> -->
+    <div class="profile-form">
+      <button type="button" id="openPopupBtn">Change Starter Pokemon</button>
+      <div id="popup" class="popup">
+          <div class="popup-content">
+              <span class="close" id="closePopupBtn">&times;</span>
+              <h2>Select Your Starter</h2>
+              <div id="imageGridContainer">
+                <div class="column">
+                    <h3>Grass</h3>
+                    <div id="imageGridGrass" class="imageGrid"></div>
+                </div>
+                <div class="column">
+                    <h3>Fire</h3>
+                    <div id="imageGridFire" class="imageGrid"></div>
+                </div>
+                <div class="column">
+                    <h3>Water</h3>
+                    <div id="imageGridWater" class="imageGrid"></div>
+                </div>
+            </div>
+          </div>
+      </div>
+    </div>
   </div>
   
   <div class="title">
@@ -50,7 +74,7 @@
   </form>
 
   <form action="/upload" method="post" enctype="multipart/form-data" id="post-form">
-    <div class="profile-form">
+    <!-- <div class="profile-form">
       <h2>Change Starter</h2>
       <button type="button" id="openPopupBtn">Select Profile Picture</button>
       <div id="popup" class="popup">
@@ -73,7 +97,7 @@
             </div>
           </div>
       </div>
-    </div>
+    </div> -->
 
     <div class="chat-form">
         <label for="postbox">Create a Post:</label>

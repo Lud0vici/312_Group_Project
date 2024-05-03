@@ -1,7 +1,7 @@
 const ws = true;
 let socket = null;
 var userList = [];
-let ImageUrl = "public/image/placeholder_user.jpg";
+let ImageUrl = "public/image/placeholder_user.png";
 
 function initWS() {
     // Establish a WebSocket connection with the server
