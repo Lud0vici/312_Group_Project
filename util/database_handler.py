@@ -24,7 +24,8 @@ def insert_user(first_name, last_name, email, username, salt, hashedPassword):
             "salt": salt,
             "password": hashedPassword,
             "auth_token": "",
-            "coins": 0
+            "coins": 0,
+            "profilePic": ""
             })
 
 def salt_and_hash_password(password):

@@ -402,10 +402,14 @@ def get_chat_messages():
     chat_messages = database_handler.chat_collection.find({})
     chat_history = []
     for data in chat_messages:
+        print("data", data)
         message = data["message"]
         username = data["username"]
         msg_id = data["id"]
-        profile_Pic = data["profilePic"]
+        if "profilePic" in data:
+            profile_Pic = data["profilePic"]
+        else:
+            profile_Pic = "public/image/placeholder_user.png"
         chat_entry = {"message": message, "username": username, "id": msg_id, "profilePic": profile_Pic}
         chat_history.append(chat_entry)
     chat_history_json = json.dumps(chat_history)
