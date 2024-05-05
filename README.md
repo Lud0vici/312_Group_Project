@@ -1,8 +1,8 @@
 # 312_Group_Project
 
-**Hello, welcome to our project: Team Rocket's Rocket Reddit. 
-Link: https://rocketreddit.com
-Rocket Reddit is a pokemon themed social media app that features:**
+**Hello, welcome to our project: Team Rocket's Rocket Reddit. **
+**Link: https://rocketreddit.com**
+**Rocket Reddit is a pokemon themed social media app that features:**
 - Account registration
 - Account login
 - Logout
