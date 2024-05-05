@@ -5,7 +5,7 @@ let ImageUrl = "public/image/placeholder_user.png";
 
 function initWS() {
     // Establish a WebSocket connection with the server
-    socket = new WebSocket('wss://' + window.location.host + '/websocket');
+    socket = new WebSocket('ws://' + window.location.host + '/websocket');
     //    socket = new WebSocket('wss://' + window.location.host + '/websocket');
 
     // Called whenever data is received from the server over the WebSocket connection
@@ -31,10 +31,24 @@ function updateUserList(userList) {
     var userListElement = document.getElementById("userList");
     // Clear the existing user list
     userListElement.innerHTML = "";
-    // Add each user from the updated user list to the user lit on html
+    // Add each user from the updated user list to the user list on HTML
     userList.forEach(function(user) {
         var listItem = document.createElement("li");
-        listItem.textContent = user;
+
+        var userSpan = document.createElement("span");
+        userSpan.textContent = user;
+        listItem.appendChild(userSpan);
+
+        // Add some space
+        listItem.appendChild(document.createTextNode(' '));
+
+        var stealButton = document.createElement("button");
+        stealButton.textContent = "Steal PokeCoins";
+        stealButton.onclick = function() {
+            stealCoins(user);
+        };
+        listItem.appendChild(stealButton);
+
         userListElement.appendChild(listItem);
     });
 }
@@ -105,8 +119,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 });
 
-
-
 function earnCoins() {
     fetch('/earn-coins', {
         method: 'POST',
@@ -159,9 +171,52 @@ function handleButtonClick() {
     }, 1000); // Update every second
 }
 
+function stealCoins(user) {
+    var lastClickTime = localStorage.getItem("lastClickTime");
+    var currentTime = Date.now();
 
+    // Check if the button was clicked within the last minute
+    if (lastClickTime && (currentTime - lastClickTime < 60000)) {
+        alert("Please wait before stealing coins again.");
+        return;
+    }
 
+    // Store the current time when the button is clicked
+    localStorage.setItem("lastClickTime", currentTime);
 
+    fetch('/steal-coins', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user: user })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert(data.error);
+        } else {
+            console.log(data.amount + ' PokeCoins stolen from user: ' + user)
+            alert(data.amount + ' PokeCoins stolen from user: ' + user);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while trying to steal coins.');
+    });
+
+    // Start the timer
+    var count = 60; // Countdown time in seconds
+    var timer = setInterval(function() {
+        var timerText = document.getElementById("timerText");
+        timerText.innerHTML = "Please wait " + count + " seconds before stealing coins again";
+        count--;
+        if (count < 0) {
+            clearInterval(timer);
+            timerText.innerHTML = ""; // Clear the timer text
+        }
+    }, 1000); // Update every second
+}
 
 function toggleLike(index) {
     if (posts[index].liked) {
