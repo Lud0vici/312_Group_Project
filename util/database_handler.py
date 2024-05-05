@@ -50,6 +50,18 @@ def can_earn_coins(username):
 def update_last_earned(username): 
     user_collection.update_one({"username": username}, {"$set": {"last_earned": datetime.now()}})
 
+#function to determine if user can steal coins once timer ends 
+def can_steal_coins(username): 
+    user = user_collection.find_one({"username": username})
+    last_stolen = user.get("last_stolen")
+    if last_stolen and (datetime.now() - last_earned) < timedelta(minutes=1):  # 5 minutes cooldown
+        return False
+    return True
+
+#function to detemine when the last time user got coins 
+def update_last_stolen(username): 
+    user_collection.update_one({"username": username}, {"$set": {"last_stolen": datetime.now()}})
+
 #function to increment the users coins 
 def add_coins(username, coins): 
     user_collection.update_one({"username": username}, {"$inc": {"coins": coins}})

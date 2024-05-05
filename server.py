@@ -254,15 +254,14 @@ def earn_coins():
     new_coin_count = database_handler.add_coins(username, coins_earned)
     return  jsonify({'message': 'Coins added successfully','coins_earned': coins_earned, 'new_coin_count': new_coin_count }), 200
 
-@app.route("/steal-coins", method = ["POST"])
+@app.route("/steal-coins", methods=["POST"])
 def steal_coins():
     username = session.get("username")  # the user stealing the coins
-    victim = json.loads(request.data)["user"]
-    if not database_handler.can_earn_coins(username):   # cooldown for stealing
+    victim = json.loads(request.data)["victim"]
+    if not database_handler.can_steal_coins(username):   # cooldown for stealing
         return redirect(url_for('serve_homepage'))
     coins_earned = random.randint(1,100)
-    database_handler.update_last_earned(username)
-    database_handler.update_last_earned(victim)
+    database_handler.update_last_stolen(username)
     robber_coin_count = database_handler.add_coins(username, coins_earned)
     victim_coin_count = database_handler.add_coins(victim, coins_earned * -1)
     return jsonify({'message': 'Coins added successfully', 'coins_earned': coins_earned, 'robber_coin_count': robber_coin_count, 'victim_coin_count': victim_coin_count}), 200

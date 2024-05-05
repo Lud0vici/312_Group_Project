@@ -189,7 +189,7 @@ function stealCoins(user) {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user: user })
+        body: JSON.stringify({ victim: user })
     })
     .then(response => response.json())
     .then(data => {
@@ -337,7 +337,7 @@ function sendChat() {
                 console.log(this.response);
             }
         }
-        const messageJSON = {"message": message};
+        const messageJSON = {"message": message, "profilePic": ImageUrl};
         request.open("POST", "/chat-messages");
         request.send(JSON.stringify(messageJSON));
     }
