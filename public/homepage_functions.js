@@ -196,8 +196,8 @@ function stealCoins(user) {
         if (data.error) {
             alert(data.error);
         } else {
-            console.log(data.amount + ' PokeCoins stolen from user: ' + user)
-            alert(data.amount + ' PokeCoins stolen from user: ' + user);
+            console.log(data.coins_earned + ' PokeCoins stolen from user: ' + user)
+            alert(data.coins_earned + ' PokeCoins stolen from user: ' + user);
         }
     })
     .catch(error => {

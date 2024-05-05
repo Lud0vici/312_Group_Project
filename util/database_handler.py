@@ -55,7 +55,7 @@ def update_last_earned(username):
 def can_steal_coins(username): 
     user = user_collection.find_one({"username": username})
     last_stolen = user.get("last_stolen")
-    if last_stolen and (datetime.now() - last_earned) < timedelta(minutes=1):  # 5 minutes cooldown
+    if last_stolen and (datetime.now() - last_stolen) < timedelta(minutes=1):  # 5 minutes cooldown
         return False
     return True
 
