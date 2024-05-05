@@ -6,7 +6,7 @@
 - Account registration
 - Account login
 - Logout
-- Live chatting with other users
+- Live chatting with other users. Chats show up in a horizontal fashion to fit the chat box. This mimics a world where users/Pokemon are interacting with one another instead of being separted from top to bottom.
 - Media uploads
 - Time based collection of website currency called "PokeCoins"
 - Interaction where users can steal each other's PokeCoins

@@ -3,6 +3,7 @@ import os
 import secrets
 import socket
 import socketserver
+import time
 import uuid
 import random 
 
@@ -200,8 +201,46 @@ def serve_login():
             return response
 
 
+
+request_counts = {}
+blocked_ips = {}
+
+request_limit = 50  #limit to 50 requests
+time_period = 10    #seconds
+block_time = 30     #seconds
+
 @app.route("/homepage")
 def serve_homepage():
+    # Get the IP address of the client from nginx header
+    ip_address = request.headers.get("X-Real-IP")
+
+    # Check if the IP is blocked
+    if ip_address in blocked_ips:
+        # Check if it's time to unblock the IP
+        if time.time() > blocked_ips[ip_address]:
+            del blocked_ips[ip_address]  # Unblock the IP
+        else:
+            return jsonify({'message': 'Too Many Requests. Please try again later.'}), 429
+
+    # Check if IP exists in request_counts dictionary, if not, add it
+    if ip_address not in request_counts:
+        request_counts[ip_address] = []
+
+    # Remove timestamps that are older than 10 seconds
+    current_time = time.time()
+    request_counts[ip_address] = [t for t in request_counts[ip_address] if current_time - t <= time_period]
+
+    # Add current request timestamp
+    request_counts[ip_address].append(current_time)
+
+    # Check if request limit exceeded
+    if len(request_counts[ip_address]) > request_limit:
+        # Block the IP for 30 seconds
+        blocked_ips[ip_address] = time.time() + block_time
+        return jsonify({'message': 'Too Many Requests. Please try again later.'}), 429
+
+
+
     username = session.get("username")
     auth_token = request.cookies.get("authentication-token")
     # user_data = user_data
