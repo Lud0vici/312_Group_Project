@@ -253,12 +253,19 @@ def earn_coins():
     database_handler.update_last_earned(username) 
     new_coin_count = database_handler.add_coins(username, coins_earned)
     return  jsonify({'message': 'Coins added successfully','coins_earned': coins_earned, 'new_coin_count': new_coin_count }), 200
-#@sock.route('/websocket') 
-# def coin_earning(ws): 
-#     while True: 
-#         data = ws.receive() 
-#         if data['action'] == 'earn_coins':
-#             username = session.get("username")
+
+@app.route("/steal-coins", method = ["POST"])
+def steal_coins():
+    username = session.get("username")  # the user stealing the coins
+    victim = json.loads(request.data)["user"]
+    if not database_handler.can_earn_coins(username):   # cooldown for stealing
+        return redirect(url_for('serve_homepage'))
+    coins_earned = random.randint(1,100)
+    database_handler.update_last_earned(username)
+    database_handler.update_last_earned(victim)
+    robber_coin_count = database_handler.add_coins(username, coins_earned)
+    victim_coin_count = database_handler.add_coins(victim, coins_earned * -1)
+    return jsonify({'message': 'Coins added successfully', 'coins_earned': coins_earned, 'robber_coin_count': robber_coin_count, 'victim_coin_count': victim_coin_count}), 200
 
 @app.route("/logout", methods=["POST"])
 def serve_logout():  # serve logout button when we have the user on our actual page, not login or registration

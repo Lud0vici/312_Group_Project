@@ -129,6 +129,7 @@ function earnCoins() {
     });
 }
 
+
 function handleButtonClick() {
     var button = document.getElementById("earn-coins-button");
     var lastClickTime = localStorage.getItem("lastClickTime");
