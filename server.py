@@ -211,8 +211,8 @@ block_time = 30     #seconds
 
 @app.route("/homepage")
 def serve_homepage():
-    # Get the IP address of the client
-    ip_address = request.remote_addr
+    # Get the IP address of the client from nginx header
+    ip_address = request.headers.get("X-Real-IP")
 
     # Check if the IP is blocked
     if ip_address in blocked_ips:
